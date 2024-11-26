@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:techno_mobile/ProductBox.dart';
 
 class CartsPage extends StatefulWidget {
   const CartsPage({super.key});
@@ -12,9 +13,16 @@ class CartsPage extends StatefulWidget {
 class _CartsPage extends State<CartsPage> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      alignment: Alignment.center,
-      child: const Text("This is Carts page")
+    return const SingleChildScrollView(
+      child: Column(
+        children: [
+          ProductBox(),
+          ProductBox(),
+          ProductBox(),
+          ProductBox(),
+          ProductBox(),
+        ],
+      ),
     );
   }
 }
