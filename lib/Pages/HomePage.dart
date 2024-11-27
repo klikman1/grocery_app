@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:techno_mobile/ProductInTheList.dart';
 import 'package:techno_mobile/models/Product.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,14 +21,14 @@ class _HomePage extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(20.0),
-      color: Colors.red,
-      child: const Row(
+    return const SingleChildScrollView(
+      child: Column(
         children: [
-          Text("This is home page"),
-          Text("This is home page"),
-          Text("This is home page"),
+          ProductInTheList(),
+          ProductInTheList(),
+          ProductInTheList(),
+          ProductInTheList(),
+          ProductInTheList(),
         ],
       ),
     );
