@@ -9,7 +9,8 @@ class ShoppingCartsPage extends StatelessWidget {
   const ShoppingCartsPage({super.key});
 
   // Alert dialog for editing the cart name
-  Widget editDialog(BuildContext context, CartProvider provider, TextEditingController controllerName, String cartId){
+  Widget editDialog(BuildContext context, CartProvider provider,
+      TextEditingController controllerName, String cartId) {
     return AlertDialog(
       title: const Text('Edit Cart Name'),
       content: TextField(
@@ -43,10 +44,8 @@ class ShoppingCartsPage extends StatelessWidget {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Shopping Carts'), // Page title
@@ -65,7 +64,6 @@ class ShoppingCartsPage extends StatelessWidget {
             );
           }
 
-
           return ListView.builder(
             itemCount: provider.carts.length, // Number of items in the list
             itemBuilder: (context, index) {
@@ -75,38 +73,48 @@ class ShoppingCartsPage extends StatelessWidget {
                 key: ValueKey(cart.id), // Unique key for the cart
                 resetSlide: resetSlide,
                 items: [
-                  ActionItems(icon: const Icon(Icons.edit,color: Colors.blueAccent), onPress: () {
-                    final cartNameController = TextEditingController(text: cart.name);
+                  ActionItems(
+                      icon: const Icon(Icons.edit, color: Colors.blueAccent),
+                      onPress: () {
+                        final cartNameController =
+                            TextEditingController(text: cart.name);
 
-                    // Edit the Cart's name
-                     showDialog(
-                      context: context,
-                      barrierDismissible: false, // Prevents dismissing by tapping outside
-                      builder: (BuildContext context) {
-                        return editDialog(context, provider, cartNameController, cart.id);
+                        // Edit the Cart's name
+                        showDialog(
+                          context: context,
+                          // Prevents dismissing by tapping outside
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return editDialog(
+                                context, provider, cartNameController, cart.id);
+                          },
+                        );
                       },
-                    );
-                  }, backgroudColor: Colors.transparent),
+                      backgroudColor: Colors.transparent),
+                  ActionItems(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPress: () {
+                        // Delete cart
+                        provider.deleteCart(cart.id);
 
-                  ActionItems(icon: const Icon(Icons.delete,color: Colors.red), onPress: () {
-                    // Delete cart
-                    provider.deleteCart(cart.id);
-
-                    // Show a snackbar
-                    ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                    content: Text('${cart.name} has been deleted'),
-                    ),
-                    );
-                  }, backgroudColor: Colors.transparent),
+                        // Show a snack bar
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('${cart.name} has been deleted'),
+                          ),
+                        );
+                      },
+                      backgroudColor: Colors.transparent),
                 ],
                 child: Card(
                   child: ListTile(
-                    title: Text(cart.name), // Cart name
+                    title: Text(cart.name),
+                    // Cart name
                     subtitle: Text(
                       'Products: ${cart.totalProduct} | Total: € ${cart.total.toStringAsFixed(2)}', // Cart details
                     ),
-                    trailing: const Icon(Icons.arrow_forward), // Navigation icon
+                    trailing: const Icon(Icons.arrow_forward),
+                    // Navigation icon
                     onTap: () {
                       // Navigates to the cart details page
                       Navigator.push(
@@ -122,43 +130,46 @@ class ShoppingCartsPage extends StatelessWidget {
             },
           );
         },
-    ),
+      ),
     );
   }
 }
 
 // Function to show dialog for editing cart name
-  Future<void> editCartNameDialog(BuildContext context, TextEditingController nameController, CartProvider provider, ShoppingCart cart) async {
-    AlertDialog(
-      title: const Text('Edit Cart Name'),
-      content: TextField(
-        controller: nameController,
-        decoration: const InputDecoration(hintText: 'Enter new name'),
+Future<void> editCartNameDialog(
+    BuildContext context,
+    TextEditingController nameController,
+    CartProvider provider,
+    ShoppingCart cart) async {
+  AlertDialog(
+    title: const Text('Edit Cart Name'),
+    content: TextField(
+      controller: nameController,
+      decoration: const InputDecoration(hintText: 'Enter new name'),
+    ),
+    actions: <Widget>[
+      TextButton(
+        child: const Text('Cancel'),
+        onPressed: () {
+          Navigator.of(context).pop(); // Close the dialog
+        },
       ),
-      actions: <Widget>[
-        TextButton(
-          child: const Text('Cancel'),
-          onPressed: () {
-            Navigator.of(context).pop(); // Close the dialog
-          },
-        ),
-        TextButton(
-          child: const Text('Save'),
-          onPressed: () {
-            final newName = nameController.text.trim();
-            if (newName.isNotEmpty) {
-              // Update the cart name in the provider
-              provider.updateCartName(cart.id, newName);
+      TextButton(
+        child: const Text('Save'),
+        onPressed: () {
+          final newName = nameController.text.trim();
+          if (newName.isNotEmpty) {
+            // Update the cart name in the provider
+            provider.updateCartName(cart.id, newName);
 
-              // Show a success message
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Cart name updated!')),
-              );
-            }
-            Navigator.of(context).pop(); // Close the dialog
-          },
-        ),
-      ],
-    );
-  }
-
+            // Show a success message
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Cart name updated!')),
+            );
+          }
+          Navigator.of(context).pop(); // Close the dialog
+        },
+      ),
+    ],
+  );
+}

@@ -105,8 +105,9 @@ class _DefaultPageState extends State<DefaultPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
+              // Modal title
               const Text(
-                "What do you want to create?", // Modal title
+                "What do you want to create?",
                 style: TextStyle(
                   fontSize: 25,
                   fontWeight: FontWeight.bold,

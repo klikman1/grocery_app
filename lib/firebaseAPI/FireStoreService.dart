@@ -52,9 +52,9 @@ class FirestoreService {
   Future<void> updateProductStock(String productId, int stockQuantity) async {
     try {
       await productsCollection.doc(productId).update({'stockQuantity': stockQuantity});
-      print("Product stock updated in Firestore!");
+      print("Product stock updated in database!");
     } catch (e) {
-      print("Error updating product stock in Firestore: $e");
+      print("Error updating product stock in database: $e");
     }
   }
 
@@ -65,7 +65,7 @@ class FirestoreService {
           .doc(productId)
           .delete();
     } catch (e) {
-      print("Error deleting product from Firestore: $e");
+      print("Error deleting product from database: $e");
     }
   }
 
@@ -79,7 +79,7 @@ class FirestoreService {
   // Fetch carts from Database
   Future<List<ShoppingCart>> fetchCarts() async {
     try {
-      final cartsFromDatabase = await cartsCollection.get();  // Get carts collection from Firestore
+      final cartsFromDatabase = await cartsCollection.get();  // Get carts collection from database
 
       return cartsFromDatabase.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
@@ -92,7 +92,7 @@ class FirestoreService {
         );
       }).toList();
     } catch (e) {
-      print("Error fetching carts from Firestore: $e");
+      print("Error fetching carts from database: $e");
       return [];
     }
   }
@@ -124,7 +124,7 @@ class FirestoreService {
       await cartsCollection.doc(cartId).delete();
       print("Cart deleted from Database!");
     } catch (e) {
-      print("Error deleting cart from Firestore: $e");
+      print("Error deleting cart from database: $e");
     }
   }
 }

@@ -19,7 +19,8 @@ class _CreateProductState extends State<CreateProductPage> {
   final _nameController = TextEditingController();
   final _priceController = TextEditingController();
   final _nutritionController = TextEditingController();
-  final _stockQuantityController = TextEditingController(); // Added stock quantity controller
+  final _stockQuantityController =
+      TextEditingController(); // Added stock quantity controller
 
   // Key for form validation
   final _formKey = GlobalKey<FormState>();
@@ -36,7 +37,8 @@ class _CreateProductState extends State<CreateProductPage> {
 
   // Function to pick an image from the gallery
   Future<void> pickImageFromGallery() async {
-    final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       setState(() {
         uploadedImage = File(pickedImage.path); // Update uploaded image
@@ -51,7 +53,8 @@ class _CreateProductState extends State<CreateProductPage> {
       final pName = _nameController.text;
       final pUnityPrice = double.parse(_priceController.text);
       final pNutritionDetails = _nutritionController.text;
-      final pStockQuantity = int.parse(_stockQuantityController.text); // Parse stock quantity
+      final pStockQuantity =
+          int.parse(_stockQuantityController.text); // Parse stock quantity
       final pImageUrl = uploadedImage?.path;
 
       // Access the product provider
@@ -138,7 +141,9 @@ class _CreateProductState extends State<CreateProductPage> {
                             ),
                             keyboardType: TextInputType.number,
                             validator: (value) {
-                              if (value == null || value.isEmpty || int.tryParse(value) == null) {
+                              if (value == null ||
+                                  value.isEmpty ||
+                                  int.tryParse(value) == null) {
                                 return "Please enter a valid stock quantity";
                               }
                               return null;

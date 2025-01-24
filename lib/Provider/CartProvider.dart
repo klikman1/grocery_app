@@ -12,6 +12,19 @@ class CartProvider extends ChangeNotifier {
 
   List<ShoppingCart> get carts => _carts;
 
+  // Fetch all carts from database
+  Future<void> fetchCarts() async {
+    try {
+      final cartsFromDatabase = await _firestoreService.fetchCarts(); // Fetch carts from database
+      _carts.clear();  // Clear the list before adding new data
+      _carts.addAll(cartsFromDatabase);  // Add fetched carts to the list
+      notifyListeners();  // Notify listeners to update the UI
+    } catch (e) {
+      print("Error fetching carts: $e");
+    }
+  }
+
+
   // Create a cart
   Future<void> createCart(String name) async {
 
@@ -23,23 +36,10 @@ class CartProvider extends ChangeNotifier {
       'products': {},
     });
 
-    final newCart = _firestoreService.fetchCarts();
     fetchCarts();
 
     notifyListeners();
 
-  }
-
-  // Fetch all carts from database
-  Future<void> fetchCarts() async {
-    try {
-      final cartsFromDatabase = await _firestoreService.fetchCarts(); // Fetch carts from database
-      _carts.clear();  // Clear the list before adding new data
-      _carts.addAll(cartsFromDatabase);  // Add fetched carts to the list
-      notifyListeners();  // Notify listeners to update the UI
-    } catch (e) {
-      print("Error fetching carts: $e");
-    }
   }
 
   // Add a product to the cart
@@ -73,27 +73,27 @@ class CartProvider extends ChangeNotifier {
     // Decrease the product's stock quantity (locally)
     product.stockQuantity -= quantity;
 
-    // Check if the cart exists in Firestore
-    final cartDoc = await FirebaseFirestore.instance.collection('carts').doc(cart.id).get();
+    // Check if the cart exists in database
+    final foundCart = await FirebaseFirestore.instance.collection('carts').doc(cart.id).get();
 
-    if (!cartDoc.exists) {
-      // If the cart doesn't exist, create a new cart in Firestore
+    if (!foundCart.exists) {
+      // If the cart doesn't exist, create a new cart in database
       await _firestoreService.addCart({
         'name': cart.name,
         'totalProduct': updatedTotalProduct,
         'total': updatedTotal,
         'products': updatedProducts,
       });
-      print("Cart created in Firestore!");
+      print("Cart created in database!");
     } else {
-      // If the cart exists, update it in Firestore
+      // If the cart exists, update it in database
       await _firestoreService.updateCart(cart.id, {
         'name': cart.name,
         'totalProduct': updatedTotalProduct,
         'total': updatedTotal,
         'products': updatedProducts,
       });
-      print("Cart updated in Firestore!");
+      print("Cart updated in database!");
     }
 
     // Update product stock in database as well
@@ -122,11 +122,14 @@ class CartProvider extends ChangeNotifier {
     final cart = _carts[cartIndex];
     if (!cart.products.containsKey(productId)) return;
 
+    // Get product's quantity that was in the cart
     final quantity = cart.products[productId]!;
 
+    // Remove the product in the cart
     final updatedProducts = Map<String, int>.from(cart.products);
     updatedProducts.remove(productId);
 
+    // (Return the product's quantity in the stock)
     final product = _findProductById(context, productId);
     if (product != null) {
       product.stockQuantity += quantity;
@@ -135,6 +138,7 @@ class CartProvider extends ChangeNotifier {
     final updatedTotalProduct = cart.totalProduct - quantity;
     final updatedTotal = cart.total - (product?.unityPrice ?? 0) * quantity;
 
+    // Update the cart with a new instance
     _carts[cartIndex] = ShoppingCart(
       id: cart.id,
       name: cart.name,
@@ -233,7 +237,7 @@ class CartProvider extends ChangeNotifier {
     await _firestoreService.deleteCart(cartId);
   }
 
-  // Helper method to find a product by ID
+  // Find a product by ID
   Product? _findProductById(BuildContext context, String productId) {
     final productProvider = Provider.of<ProductProvider>(context, listen: false);
     return productProvider.findProductById(productId);
