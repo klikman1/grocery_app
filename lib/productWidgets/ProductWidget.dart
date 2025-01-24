@@ -19,6 +19,55 @@ class ProductWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<CartProvider>(context, listen: false);
 
+
+    // Dialog for selecting a cart
+    Widget selectCart(){
+      return AlertDialog(
+        title: const Text("Select Cart"),
+        content: StatefulBuilder(
+          builder: (context, setState) {
+            String? selectedCartId; // Store selected cart id
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Dropdown to select a cart
+                DropdownButton<String>(
+                  value: selectedCartId,
+                  hint: const Text("Select a cart"),
+                  isExpanded: true,
+                  items: provider.carts.map((cart) {
+                    return DropdownMenuItem<String>(
+                      value: cart.id,
+                      child: Text(cart.name),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    setState(() {
+                      selectedCartId = value;
+                      provider.addProductToCart(
+                        selectedCartId!,
+                        product,
+                        1,
+                      );
+                      Navigator.pop(context);
+                    });
+                  },
+                ),
+              ],
+            );
+          },
+        ),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context); // Close the dialog without adding
+            },
+            child: const Text("Cancel"),
+          ),
+        ],
+      );
+    }
+
     return Card(
       color: Colors.blueGrey,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -101,10 +150,12 @@ class ProductWidget extends StatelessWidget {
                         if (provider.carts.isEmpty) {
                           provider.createCart("QuickList");
                         }
-                        provider.addProductToCart(
-                          provider.carts[0].id,
-                          product,
-                          1,
+
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return selectCart();
+                          },
                         );
                       },
                       child: const Text("Add to cart"),
