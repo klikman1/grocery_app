@@ -64,7 +64,7 @@ class _CreateProductState extends State<CreateProductPage> {
         pUnityPrice,
         pNutritionDetails,
         pImageUrl ??
-            "https://upload.wikimedia.org/wikipedia/commons/1/15/Red_Apple.jpg", // Provide default or fallback image
+            "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/No_image_available.svg/450px-No_image_available.svg.png", // Provide default image
       );
 
       // Show success message and navigate back
