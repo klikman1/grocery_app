@@ -1,11 +1,19 @@
 import 'dart:core';
 
 class Product {
+  final String id;
   String name;
-  double price;
-  String description;
+  int stockQuantity;
+  double unityPrice;
+  String nutritionDetails;
   String imageUrl;
 
-  Product({required this.name, required this.price, required this.description, required this.imageUrl});
-
+  Product({
+    required this.id,
+    required this.name,
+    required this.stockQuantity,
+    required this.unityPrice,
+    required this.nutritionDetails,
+    required this.imageUrl,
+  });
 }
