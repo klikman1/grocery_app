@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:saver_gallery/saver_gallery.dart';
 import '../Provider/ProductProvider.dart';
 
 class CreateProductPage extends StatefulWidget {
@@ -36,19 +37,57 @@ class _CreateProductState extends State<CreateProductPage> {
     super.dispose();
   }
 
-  // Function to pick an image from the gallery or camera
+  // Method to pick an image from the gallery or camera
   Future<void> pickImage() async {
-    try{
-      final pickedImage =
-      await ImagePicker().pickImage(source: ImageSource.gallery);
+    try {
 
-      print(pickedImage?.path);
-      if (pickedImage != null) {
-        setState(() {
-          uploadedImage = File(pickedImage.path); // Update uploaded image
-        });
+      // Choose between the camera or pick from the Gallery
+      final ImageSource? imageSource = await showDialog<ImageSource>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text("Select the image source"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.camera),
+              child: Text("Camera"),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, ImageSource.gallery),
+              child: Text("Gallery"),
+            ),
+          ],
+        ),
+      );
+
+      // If no choice was made
+      if(imageSource == null) return;
+
+      // Else
+      final pickedImage = await ImagePicker().pickImage(source: imageSource);
+
+      // No image picked
+      if(pickedImage == null) return;
+
+      final imageFile = File(pickedImage.path);
+
+      // Save to gallery if image is from the camera
+      if (imageSource == ImageSource.camera) {
+        final imageBytes = await imageFile.readAsBytes();
+        await SaverGallery.saveImage(
+          imageBytes,
+          fileName: 'image_from_camera_${DateTime.now().millisecondsSinceEpoch}',
+          skipIfExists: false,
+        );
       }
-    } on PlatformException catch (e){
+
+      print('Image picked: ${pickedImage.path}');
+
+      // Update UI
+      setState(() {
+        uploadedImage = imageFile;
+      });
+
+    } on PlatformException catch (e) {
       print('Failed to pick image: $e');
     }
   }
