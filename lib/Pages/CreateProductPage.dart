@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../Provider/ProductProvider.dart';
@@ -35,14 +36,20 @@ class _CreateProductState extends State<CreateProductPage> {
     super.dispose();
   }
 
-  // Function to pick an image from the gallery
-  Future<void> pickImageFromGallery() async {
-    final pickedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (pickedImage != null) {
-      setState(() {
-        uploadedImage = File(pickedImage.path); // Update uploaded image
-      });
+  // Function to pick an image from the gallery or camera
+  Future<void> pickImage() async {
+    try{
+      final pickedImage =
+      await ImagePicker().pickImage(source: ImageSource.gallery);
+
+      print(pickedImage?.path);
+      if (pickedImage != null) {
+        setState(() {
+          uploadedImage = File(pickedImage.path); // Update uploaded image
+        });
+      }
+    } on PlatformException catch (e){
+      print('Failed to pick image: $e');
     }
   }
 
@@ -101,7 +108,7 @@ class _CreateProductState extends State<CreateProductPage> {
                   children: [
                     // Image upload section
                     GestureDetector(
-                      onTap: pickImageFromGallery, // Opens gallery on tap
+                      onTap: pickImage, // Opens gallery on tap
                       child: Container(
                         width: 200,
                         height: 200,

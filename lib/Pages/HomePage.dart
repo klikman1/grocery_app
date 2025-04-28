@@ -2,12 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/ProductProvider.dart';
 import 'package:techno_mobile/productWidgets/ProductWidget.dart';
-import 'package:techno_mobile/productWidgets/ProductInTheList.dart';
-import 'package:techno_mobile/models/Product.dart';
-
 import '../Provider/CartProvider.dart';
-import '../firebaseAPI/dummyData.dart';
-import '../firebaseAPI/FireStoreService.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

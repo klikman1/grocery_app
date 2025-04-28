@@ -1,10 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/CartProvider.dart';
-import 'package:techno_mobile/firebaseAPI/dummyData.dart';
 import 'package:techno_mobile/models/Product.dart';
 import 'package:transparent_image/transparent_image.dart';
-
 import '../Pages/EditProductPage.dart';
 
 /*
@@ -90,15 +90,10 @@ class ProductWidget extends StatelessWidget {
             // Product image with fade-in effect
             FadeInImage(
               placeholder: MemoryImage(kTransparentImage),
-              image: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
-                width: double.infinity,
-                height: 300,
-              ).image,
+              image: Image.file(File(product.imageUrl)).image,
               fit: BoxFit.cover,
               width: double.infinity,
-              height: 300,
+              height: 200,
             ),
             Container(
               padding: const EdgeInsets.all(10.0),
