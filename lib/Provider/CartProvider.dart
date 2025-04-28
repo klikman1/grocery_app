@@ -183,10 +183,14 @@ class CartProvider extends ChangeNotifier {
           productId,
               (existingQuantity) => existingQuantity - quantity,
         );
+        // Find the product by its ID
+        final product = _findProductById(context, productId);
 
         // Calculate the updated totals for the cart
         final updatedTotalProduct = cart.totalProduct - quantity;
-        final updatedTotal = cart.total - (cart.products[productId]! * quantity);
+        var updatedTotal = cart.total - (product?.unityPrice?? 0 * quantity);
+
+        if(updatedTotal < 0) updatedTotal = 0.0;
 
         // Update the cart in the list
         _carts[cartIndex] = ShoppingCart(
@@ -197,8 +201,6 @@ class CartProvider extends ChangeNotifier {
           products: updatedProducts,
         );
 
-        // Find the product by its ID
-        final product = _findProductById(context, productId);
         if (product != null) {
           // Update product stock quantity
           product.stockQuantity += quantity;

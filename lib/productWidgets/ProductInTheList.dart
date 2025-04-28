@@ -139,7 +139,7 @@ class _ProductInTheListState extends State<ProductInTheList> {
                             provider.removeQuantityOfProductFromCart(context,
                                 widget.concernedCart,
                                 widget.productId,
-                                quantity);
+                                1);
                           }
                         },
                       ),
@@ -164,7 +164,7 @@ class _ProductInTheListState extends State<ProductInTheList> {
                                 isButtonDisabled = false;
                               });
                               provider.addProductToCart(widget.concernedCart,
-                                  productFound!, quantity);
+                                  productFound!, 1);
                             } else {
                               // Show a message if no stock is available
                               ScaffoldMessenger.of(context).showSnackBar(

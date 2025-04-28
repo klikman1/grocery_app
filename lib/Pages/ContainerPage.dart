@@ -8,15 +8,15 @@ import '../Pages/HomePage.dart';
 import '../Pages/ShoppingCartsPage.dart';
 import '../Pages/CreateShoppingCartPage.dart';
 
-class DefaultPage extends StatefulWidget {
-  const DefaultPage({super.key});
+class ContainerPage extends StatefulWidget {
+  const ContainerPage({super.key});
 
   @override
-  State<StatefulWidget> createState() => _DefaultPageState();
+  State<StatefulWidget> createState() => _ContainerPageState();
 }
 
 // State class for DefaultPage that manages navigation and initialization
-class _DefaultPageState extends State<DefaultPage> {
+class _ContainerPageState extends State<ContainerPage> {
   // List of titles for the navigation tabs
   final List<String> _pageTitles = [
     "Home Page",
@@ -34,7 +34,7 @@ class _DefaultPageState extends State<DefaultPage> {
   // Pages corresponding to each tab
   final List<Widget> _pages = [
     const HomePage(),
-    const HomePage(),
+    const HomePage(), // Just to start at the home page by default
     ShoppingCartsPage(),
   ];
 

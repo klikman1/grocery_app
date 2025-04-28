@@ -24,5 +24,13 @@
 		<false/>
 		<key>UIStatusBarStyle</key>
 		<string>UIStatusBarStyleDefault</string>
+		<key>NSCameraUsageDescription </key>
+		<string>To take user profile image</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+        <string>We need access to your gallery to save pictures.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+        <string>To choose user profile image</string>
+        <key>NSMicrophoneUsageDescription</key>
+        <string>Used to capture audio for image picker plugin</string>
 	</dict>
 </plist>
