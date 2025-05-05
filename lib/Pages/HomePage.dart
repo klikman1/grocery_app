@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/ProductProvider.dart';
-import 'package:techno_mobile/productWidgets/ProductWidget.dart';
+import 'package:techno_mobile/Widgets/ProductWidget.dart';
 import '../Provider/CartProvider.dart';
 
 class HomePage extends StatefulWidget {
