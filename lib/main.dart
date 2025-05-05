@@ -3,20 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/ProductProvider.dart';
+import 'package:techno_mobile/Views/shopping_lists_page.dart';
 
-import 'Pages/ContainerPage.dart';
 import 'Provider/CartProvider.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
-  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
+  // FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-
-
   runApp(MyApp());
 }
 
@@ -34,8 +32,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Flutter Demo',
-            home: ContainerPage(),
+            home: ShoppingListsPage(),
           );
         });
   }
