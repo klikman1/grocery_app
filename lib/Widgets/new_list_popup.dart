@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:techno_mobile/Provider/CartProvider.dart';
 
 class NewListPopup extends StatefulWidget {
   const NewListPopup({super.key});
@@ -68,7 +70,15 @@ class NewListPopupState extends State<NewListPopup> {
           onPressed: () {
             if (_controller.text.isNotEmpty && regExp.hasMatch(_controller.text.trim())) {
               final listName = _controller.text.trim();
-              Navigator.of(context).pop(listName);
+              Provider.of<CartProvider>(context, listen: false).createCart(listName);
+
+              Navigator.pop(context);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Cart "$listName" created successfully!'),
+                ),
+              );
             }
           },
 
