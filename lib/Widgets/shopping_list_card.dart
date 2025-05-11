@@ -67,7 +67,7 @@ class ShoppingListCardState extends State<ShoppingListCard> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => ListDetailsPage(),
+              builder: (context) => ListDetailsPage(shoppingCart: specificCart, checkedCount: checkedCount, totalCount: totalCount),
             ),
           );
         },

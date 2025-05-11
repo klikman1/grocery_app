@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:techno_mobile/Widgets/semi_round_count_box.dart';
+import 'package:techno_mobile/models/ShoppingCart.dart';
 
 class ListDetailsPage extends StatefulWidget{
-  const ListDetailsPage({super.key});
+  final ShoppingCart shoppingCart;
+  final int checkedCount;
+  final int totalCount;
+
+  const ListDetailsPage({super.key,required this.shoppingCart, required this.checkedCount, required this.totalCount});
 
   @override
   State<StatefulWidget> createState() {
@@ -12,7 +17,6 @@ class ListDetailsPage extends StatefulWidget{
 }
 
 class ListDetailsPageState extends State<ListDetailsPage>{
-  List<String> listDetails = [];
 
   @override
   Widget build(BuildContext context) {
@@ -27,10 +31,10 @@ class ListDetailsPageState extends State<ListDetailsPage>{
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(
-                "Saturday weekly shopping",
+                widget.shoppingCart.name,
                 style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
               ),
-              CountBox(),
+              CountBox(checkedCount: widget.checkedCount, totalCount: widget.totalCount),
             ],
           ),
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:slideable/slideable.dart';
 import 'package:techno_mobile/Provider/CartProvider.dart';
 import 'package:techno_mobile/Widgets/new_list_popup.dart';
 import 'package:techno_mobile/Widgets/shopping_list_card.dart';
@@ -120,8 +121,46 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                     child: ListView.builder(
                       itemCount: provider.carts.length,
                       itemBuilder: (context, index) {
-                        return ShoppingListCard(
-                            cartId: provider.carts[index].id
+                        final cart = provider.carts[index]; // Current cart
+                        return Slideable(
+                          key: ValueKey(cart.id),
+                          items: [
+                            ActionItems(
+                                icon: const Icon(Icons.edit, color: Colors.blueAccent),
+                                onPress: () {
+                                  final cartNameController =
+                                  TextEditingController(text: cart.name);
+
+                                  // Edit the Cart's name
+                                  showDialog(
+                                    context: context,
+                                    // Prevents dismissing by tapping outside
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      return Container();
+                                      // TODO Implement the edit part
+                                    },
+                                  );
+                                },
+                                backgroudColor: Colors.transparent),
+                            ActionItems(
+                                icon: const Icon(Icons.delete, color: Colors.red),
+                                onPress: () {
+                                  // Delete cart
+                                  provider.deleteCart(cart.id);
+
+                                  // Show a snack bar
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('${cart.name} has been deleted'),
+                                    ),
+                                  );
+                                },
+                                backgroudColor: Colors.transparent),
+                          ],
+                          child: ShoppingListCard(
+                              cartId: cart.id
+                          ),
                         );
                       },
                     ),
