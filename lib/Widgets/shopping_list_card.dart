@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:techno_mobile/Provider/CartProvider.dart';
 import 'package:techno_mobile/Views/list_details_page.dart';
 import 'package:techno_mobile/Widgets/semi_round_count_box.dart';
 
 class ShoppingListCard extends StatefulWidget {
-  final String listName;
+  final String cartId;
 
-  const ShoppingListCard({super.key, required this.listName});
+  const ShoppingListCard({super.key, required this.cartId});
 
   @override
   State<StatefulWidget> createState() {
@@ -16,6 +18,23 @@ class ShoppingListCard extends StatefulWidget {
 class ShoppingListCardState extends State<ShoppingListCard> {
   @override
   Widget build(BuildContext context) {
+    final specificCart = Provider.of<CartProvider>(context, listen: false)
+        .carts
+        .firstWhere((cart) => cart.id == widget.cartId);
+
+    // Products that are in the specified cart
+    var products = "Empty list";
+    if(specificCart.products.join(",").isNotEmpty){
+      products = specificCart.products.join(",");
+    }
+
+    // Total number of products
+    final totalCount = specificCart.products.length;
+
+    // Total number of checked products
+    final checkedCount = specificCart.products.where((p) => p.isChecked).length;
+
+
     return Card(
       elevation: 6.0,
       margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -27,12 +46,12 @@ class ShoppingListCardState extends State<ShoppingListCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              widget.listName,
+              specificCart.name,
               style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4.0),
             Text(
-              "rice, bread, plantain + 13 more",
+              products,
               style: TextStyle(
                 fontSize: 12.0,
                 color: Colors.black54,
@@ -42,8 +61,8 @@ class ShoppingListCardState extends State<ShoppingListCard> {
         ),
 
         //------------------------Semi-round count box ------------------
-        trailing: CountBox(),
-        onTap: (){
+        trailing: CountBox(checkedCount: checkedCount, totalCount: totalCount),
+        onTap: () {
           // Navigates to the list details page
           Navigator.push(
             context,

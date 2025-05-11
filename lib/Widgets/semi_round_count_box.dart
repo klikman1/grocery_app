@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class CountBox extends StatelessWidget{
-  const CountBox({super.key});
+  final int checkedCount;
+  final int totalCount;
+
+  const CountBox({super.key, required this.checkedCount, required this.totalCount,});
 
   @override
   Widget build(BuildContext context) {
@@ -14,8 +17,8 @@ class CountBox extends StatelessWidget{
         border: Border.all(color: Colors.green, width: 3.0),
         borderRadius: BorderRadius.circular(18.0),
       ),
-      child: const Text(
-        "0/0",
+      child:  Text(
+        "$checkedCount/$totalCount",
         style: TextStyle(
           fontSize: 18.0,
           fontWeight: FontWeight.bold,

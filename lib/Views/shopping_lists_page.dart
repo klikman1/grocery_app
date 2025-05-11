@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/CartProvider.dart';
 import 'package:techno_mobile/Widgets/new_list_popup.dart';
 import 'package:techno_mobile/Widgets/shopping_list_card.dart';
+import '../Provider/ProductProvider.dart';
 
 class ShoppingListsPage extends StatefulWidget {
   const ShoppingListsPage({super.key});
@@ -14,6 +15,19 @@ class ShoppingListsPage extends StatefulWidget {
 }
 
 class ShoppingListsPageState extends State<ShoppingListsPage> {
+  @override
+  void initState() {
+    super.initState();
+    // Fetch the products when the page is loaded
+    final provider = Provider.of<ProductProvider>(context, listen: false);
+    provider.fetchProducts();
+
+    // Fetch carts from database
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    cartProvider.fetchCarts();
+
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -107,7 +121,8 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                       itemCount: provider.carts.length,
                       itemBuilder: (context, index) {
                         return ShoppingListCard(
-                            listName: provider.carts[index].name);
+                            cartId: provider.carts[index].id
+                        );
                       },
                     ),
                   ),

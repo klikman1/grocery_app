@@ -1,11 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:techno_mobile/models/ShoppingCart.dart';
-import 'package:techno_mobile/models/Product.dart';
 import '../firebaseAPI/FireStoreService.dart';
 import '../models/CartProduct.dart';
-import 'ProductProvider.dart';
 
 class CartProvider extends ChangeNotifier {
   final List<ShoppingCart> _carts = [];
@@ -19,6 +15,7 @@ class CartProvider extends ChangeNotifier {
       final cartsFromDatabase = await _firestoreService.fetchCarts();
       _carts.clear();
       _carts.addAll(cartsFromDatabase);
+
       notifyListeners();
     } catch (e) {
       print("Error fetching carts: $e");
