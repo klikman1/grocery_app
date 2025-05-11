@@ -68,9 +68,9 @@ class _ProductInTheListState extends State<ProductInTheList> {
       ),
       onDismissed: (direction) {
         // Remove the product from the cart
-        Provider.of<CartProvider>(context, listen: false)
+        /*Provider.of<CartProvider>(context, listen: false)
             .removeProductFromCart(context, widget.concernedCart, widget.productId);
-
+*/
         // Show a snackbar to confirm deletion
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -136,10 +136,10 @@ class _ProductInTheListState extends State<ProductInTheList> {
                                     true; // Disable button if quantity is 0
                               }
                             });
-                            provider.removeQuantityOfProductFromCart(context,
-                                widget.concernedCart,
-                                widget.productId,
-                                1);
+                            // provider.removeQuantityOfProductFromCart(context,
+                            //     widget.concernedCart,
+                            //     widget.productId,
+                            //     1);
                           }
                         },
                       ),
@@ -163,8 +163,8 @@ class _ProductInTheListState extends State<ProductInTheList> {
                                 totalPrice = productFound!.unityPrice*quantity;
                                 isButtonDisabled = false;
                               });
-                              provider.addProductToCart(widget.concernedCart,
-                                  productFound!, 1);
+                              // provider.addProductToCart(widget.concernedCart,
+                              //     productFound!, 1);
                             } else {
                               // Show a message if no stock is available
                               ScaffoldMessenger.of(context).showSnackBar(

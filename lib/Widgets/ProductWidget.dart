@@ -44,11 +44,11 @@ class ProductWidget extends StatelessWidget {
                   onChanged: (value) {
                     setState(() {
                       selectedCartId = value;
-                      provider.addProductToCart(
-                        selectedCartId!,
-                        product,
-                        1,
-                      );
+                      // provider.addProductToCart(
+                      //   selectedCartId!,
+                      //   product,
+                      //   1,
+                      // );
                       Navigator.pop(context);
                     });
                   },

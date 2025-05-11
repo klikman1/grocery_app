@@ -4,7 +4,7 @@ import '../firebaseAPI/FireStoreService.dart';
 
 class ProductProvider extends ChangeNotifier {
   final List<Product> _products = [];
-  final FirestoreService _firestoreService = FirestoreService();  // FirestoreService instance
+  final FirestoreService _firestoreService = FirestoreService();
 
   // Getter to provide a copy of the product list
   List<Product> get products {

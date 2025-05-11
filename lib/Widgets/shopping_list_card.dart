@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:techno_mobile/Views/list_details_page.dart';
+import 'package:techno_mobile/Widgets/semi_round_count_box.dart';
 
 class ShoppingListCard extends StatefulWidget {
   final String listName;
@@ -41,25 +42,7 @@ class ShoppingListCardState extends State<ShoppingListCard> {
         ),
 
         //------------------------Semi-round count box ------------------
-        trailing: Container(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12.0,
-            vertical: 8.0,
-          ),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.green, width: 2.0),
-            borderRadius: BorderRadius.circular(12.0),
-          ),
-          child: const Text(
-            "4/4",
-            style: TextStyle(
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-        ),
-
+        trailing: CountBox(),
         onTap: (){
           // Navigates to the list details page
           Navigator.push(
