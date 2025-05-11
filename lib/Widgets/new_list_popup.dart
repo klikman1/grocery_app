@@ -10,6 +10,8 @@ class NewListPopup extends StatefulWidget {
 }
 
 class NewListPopupState extends State<NewListPopup> {
+  final RegExp regExp = RegExp(r'^[\w\s\-]{2,}$');
+
   final TextEditingController _controller =
       TextEditingController();
 
@@ -64,8 +66,10 @@ class NewListPopupState extends State<NewListPopup> {
         ),
         TextButton(
           onPressed: () {
-            final listName = _controller.text;
-            Navigator.of(context).pop(listName);
+            if (_controller.text.isNotEmpty && regExp.hasMatch(_controller.text.trim())) {
+              final listName = _controller.text.trim();
+              Navigator.of(context).pop(listName);
+            }
           },
 
           style: TextButton.styleFrom(

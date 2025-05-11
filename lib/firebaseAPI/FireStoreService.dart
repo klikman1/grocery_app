@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../models/CartProduct.dart';
 import '../models/Product.dart';
 import '../models/ShoppingCart.dart';
 
@@ -79,16 +80,31 @@ class FirestoreService {
   // Fetch carts from Database
   Future<List<ShoppingCart>> fetchCarts() async {
     try {
-      final cartsFromDatabase = await cartsCollection.get();  // Get carts collection from database
+      final cartsFromDatabase = await cartsCollection.get();
 
       return cartsFromDatabase.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
+        // TODO Delete this string
+        print(data.toString());
+
+        final List<dynamic> productList = data['products'] ?? [];
+
+        final cartProducts = productList.map((item) {
+          final productData = item as Map<String, dynamic>;
+          return CartProduct(
+            productId: productData['productId'],
+            quantity: productData['quantity'],
+            isChecked: productData['isChecked'] ?? false,
+            cartProductId: '',
+          );
+        }).toList();
+
         return ShoppingCart(
           id: doc.id,
           name: data['name'],
           totalProduct: data['totalProduct'],
           total: data['total'],
-          products: Map<String, int>.from(data['products']),  // Convert product data to Map<String, int>
+          products: cartProducts
         );
       }).toList();
     } catch (e) {
@@ -108,6 +124,96 @@ class FirestoreService {
     }
   }
 
+  //////////////////////////////////////////////////////////////
+  /////////////// C A R T S P R O D U C T S ///////////////////
+  ////////////////////////////////////////////////////////////
+
+  // TODO: MODIFY THE TOTAL QUANTITY AND TOTAL PRICE OF THE CART
+  // Add a CartProduct to a Cart
+  Future<void> addCartProduct(String cartId, CartProduct cartProduct) async {
+    try {
+      final cartDoc = cartsCollection.doc(cartId);
+      final cartProductsCollection = cartDoc.collection('products');
+
+      // 1. Add the CartProduct
+      await cartProductsCollection.doc(cartProduct.cartProductId).set({
+        'productId': cartProduct.productId,
+        'quantity': cartProduct.quantity,
+        'isChecked': cartProduct.isChecked,
+      });
+
+      print("CartProduct added to cart $cartId!");
+
+      // Now update total quantity and total price in the ShoppingCart
+      await _recalculateCartTotals(cartId);
+    } catch (e) {
+      print("Error adding cartProduct: $e");
+    }
+  }
+
+
+  // Fetch all CartProducts for a Cart
+  Future<List<CartProduct>> fetchCartProducts(String cartId) async {
+    try {
+      final cart = cartsCollection.doc(cartId);
+      final snapshot = await cart.collection('products').get();
+
+      return snapshot.docs.map((doc) {
+        final data = doc.data();
+        return CartProduct(
+          cartProductId: doc.id,
+          productId: data['productId'],
+          quantity: data['quantity'],
+          isChecked: data['isChecked'],
+        );
+      }).toList();
+    } catch (e) {
+      print("Error fetching cart products: $e");
+      return [];
+    }
+  }
+
+  // Update a CartProduct
+  Future<void> updateCartProduct(String cartId, CartProduct cartProduct) async {
+    try {
+      final cartProductCollection = cartsCollection
+          .doc(cartId)
+          .collection('products')
+          .doc(cartProduct.cartProductId);
+
+      await cartProductCollection.update({
+        'productId': cartProduct.productId,
+        'quantity': cartProduct.quantity,
+        'isChecked': cartProduct.isChecked,
+      });
+
+      await _recalculateCartTotals(cartId);
+
+      print("CartProduct ${cartProduct.cartProductId} updated!");
+    } catch (e) {
+      print("Error updating cartProduct: $e");
+    }
+  }
+
+  // Delete a CartProduct
+  Future<void> deleteCartProduct(String cartId, String cartProductId) async {
+    try {
+      await cartsCollection
+          .doc(cartId)
+          .collection('products')
+          .doc(cartProductId)
+          .delete();
+
+      await _recalculateCartTotals(cartId);
+
+      print("CartProduct $cartProductId deleted from cart $cartId.");
+    } catch (e) {
+      print("Error deleting cartProduct: $e");
+    }
+  }
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
   // Update a cart in Database
   Future<void> updateCart(String cartId, Map<String, dynamic> updatedCartData) async {
     try {
@@ -115,6 +221,28 @@ class FirestoreService {
       print("Cart updated in Database!");
     } catch (e) {
       print("Error updating cart in Database: $e");
+    }
+  }
+
+  // TODO: MODIFY THE TOTAL QUANTITY AND TOTAL PRICE OF THE CART
+  // Updates the `products` list of a cart in Database
+  Future<void> updateCartProducts(ShoppingCart cart) async {
+    try {
+      // Transform into a list the new products data of the cart
+      final productsData = cart.products.map((cp) => {
+        'productId': cp.productId,
+        'quantity': cp.quantity,
+        'isChecked': cp.isChecked,
+      }).toList();
+
+      // Update the DB with new data
+      await cartsCollection.doc(cart.id).update({
+        'products': productsData,
+      });
+
+      print("Cart products updated in Database!");
+    } catch (e) {
+      print("Error updating cart products: $e");
     }
   }
 
@@ -127,4 +255,41 @@ class FirestoreService {
       print("Error deleting cart from database: $e");
     }
   }
+
+  // Update total quantity and total price in the ShoppingCart
+  Future<void> _recalculateCartTotals(String cartId) async {
+    try {
+      final cartCollection = cartsCollection.doc(cartId);
+      final cartProductsSnapshot = await cartCollection.collection('products').get();
+
+      int totalQuantity = 0;
+      double totalPrice = 0.0;
+
+      for (var doc in cartProductsSnapshot.docs) {
+        final data = doc.data();
+        final int quantity = data['quantity']?? 0;
+        final productId = data['productId'];
+
+        // Fetch product price
+        final productSnapshot = await productsCollection.doc(productId).get();
+        final productData = productSnapshot.data() as Map<String, dynamic>;
+        final unitPrice = productData['unityPrice'] ?? 0;
+
+
+        totalQuantity += quantity;
+        totalPrice += quantity * unitPrice;
+      }
+
+      // Update the cart's totalProduct and total
+      await cartCollection.update({
+        'totalProduct': totalQuantity,
+        'total': totalPrice,
+      });
+
+      print("Cart totals updated for cart $cartId!");
+    } catch (e) {
+      print("Error recalculating cart totals: $e");
+    }
+  }
+
 }

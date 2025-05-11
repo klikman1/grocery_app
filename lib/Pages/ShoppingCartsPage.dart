@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/CartProvider.dart';
 import 'package:techno_mobile/models/ShoppingCart.dart';
 import 'package:slideable/slideable.dart';
-import 'CartDetailsPage.dart';
 
 class ShoppingCartsPage extends StatelessWidget {
   const ShoppingCartsPage({super.key});
@@ -117,12 +116,12 @@ class ShoppingCartsPage extends StatelessWidget {
                     // Navigation icon
                     onTap: () {
                       // Navigates to the cart details page
-                      Navigator.push(
+                      /*Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => CartDetailsPage(cart: cart),
                         ),
-                      );
+                      );*/
                     },
                   ),
                 ),
