@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:techno_mobile/Widgets/add_product_in_list_popup.dart';
+import 'package:techno_mobile/Widgets/product_card.dart';
 import 'package:techno_mobile/Widgets/semi_round_count_box.dart';
 import 'package:techno_mobile/models/ShoppingCart.dart';
 
@@ -59,13 +61,23 @@ class ListDetailsPageState extends State<ListDetailsPage>{
                   textAlign: TextAlign.center,
                   softWrap: true,
                   style: TextStyle(fontSize: 18.0),
-                )
+                ),
+                ProductCard(imageUrl: 'assets/emptyList.png', name: "Fresh Broccoli", price: 22.50, weight: 23)
               ],
             ),
           ),
           //-------------------The create button---------------------------
           TextButton.icon(
-            onPressed: (){},
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (_) => Dialog(
+                  child: AddProductInListPopup(
+                    selectedCartId: widget.shoppingCart.id,
+                  ),
+                ),
+              );
+            },
             label: Text(
               "Add item",
               style: TextStyle(color: Colors.white, fontSize: 18.0),
