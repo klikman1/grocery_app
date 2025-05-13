@@ -26,14 +26,12 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
     // Fetch carts from database
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     cartProvider.fetchCarts();
-
   }
 
   @override
   Widget build(BuildContext context) {
-
     // Shopping list page title text
-    Widget _title(){
+    Widget _title() {
       return Text(
         "Your shopping Lists",
         style: TextStyle(
@@ -44,12 +42,8 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
       );
     }
 
-
     return Scaffold(
-      //-----------------------Title--------------------------
-
       backgroundColor: Colors.grey.shade100,
-
       body: Consumer<CartProvider>(
         builder: (context, provider, child) {
           // ---------------There is no groceries list created yet --------
@@ -101,7 +95,7 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
               ],
             );
           }
-
+          // ---------------There is a groceries list created --------
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(16.0),
@@ -112,9 +106,7 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                   //----------------The title of this page------------------------
                   SizedBox(
                     height: 100,
-                    child: Center(
-                      child: _title()
-                    ),
+                    child: Center(child: _title()),
                   ),
                   //--------------------Groceries list --------------------
                   Flexible(
@@ -126,41 +118,43 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                           key: ValueKey(cart.id),
                           items: [
                             ActionItems(
-                                icon: const Icon(Icons.edit, color: Colors.blueAccent),
-                                onPress: () {
-                                  final cartNameController =
-                                  TextEditingController(text: cart.name);
+                              icon: const Icon(Icons.edit,
+                                  color: Colors.blueAccent),
+                              onPress: () {
+                                final cartNameController =
+                                    TextEditingController(text: cart.name);
 
-                                  // Edit the Cart's name
-                                  showDialog(
-                                    context: context,
-                                    // Prevents dismissing by tapping outside
-                                    barrierDismissible: false,
-                                    builder: (BuildContext context) {
-                                      return Container();
-                                      // TODO Implement the edit part
-                                    },
-                                  );
-                                },
-                                backgroudColor: Colors.transparent),
+                                // Edit the Cart's name
+                                showDialog(
+                                  context: context,
+                                  // Prevents dismissing by tapping outside
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return Container();
+                                    // TODO Implement the edit part
+                                  },
+                                );
+                              },
+                              backgroudColor: Colors.transparent,
+                            ),
                             ActionItems(
-                                icon: const Icon(Icons.delete, color: Colors.red),
-                                onPress: () {
-                                  // Delete cart
-                                  provider.deleteCart(cart.id);
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPress: () {
+                                // Delete cart
+                                provider.deleteCart(cart.id);
 
-                                  // Show a snack bar
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                      content: Text('${cart.name} has been deleted'),
-                                    ),
-                                  );
-                                },
-                                backgroudColor: Colors.transparent),
+                                // Show a snack bar
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content:
+                                        Text('${cart.name} has been deleted'),
+                                  ),
+                                );
+                              },
+                              backgroudColor: Colors.transparent,
+                            ),
                           ],
-                          child: ShoppingListCard(
-                              cartId: cart.id
-                          ),
+                          child: ShoppingListCard(cartId: cart.id),
                         );
                       },
                     ),

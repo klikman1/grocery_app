@@ -22,12 +22,6 @@ class ShoppingListCardState extends State<ShoppingListCard> {
         .carts
         .firstWhere((cart) => cart.id == widget.cartId);
 
-    // Products that are in the specified cart
-    var products = "Empty list";
-    if(specificCart.products.join(",").isNotEmpty){
-      products = specificCart.products.join(",");
-    }
-
     // Total number of products
     final totalCount = specificCart.products.length;
 
@@ -51,7 +45,7 @@ class ShoppingListCardState extends State<ShoppingListCard> {
             ),
             const SizedBox(height: 4.0),
             Text(
-              products,
+              "Read me",
               style: TextStyle(
                 fontSize: 12.0,
                 color: Colors.black54,

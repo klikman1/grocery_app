@@ -4,13 +4,13 @@ class ProductCard extends StatefulWidget {
   final String imageUrl;
   final String name;
   final double price;
-  final double weight;
+  final String details;
 
   const ProductCard({
     required this.imageUrl,
     required this.name,
     required this.price,
-    required this.weight,
+    required this.details,
     super.key,
   });
 
@@ -28,7 +28,7 @@ class ProductCardState extends State<ProductCard> {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-      margin: EdgeInsets.symmetric(vertical: 6),
+      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -38,7 +38,7 @@ class ProductCardState extends State<ProductCard> {
         children: [
           CircleAvatar(
             radius: 40,
-            backgroundImage: AssetImage(widget.imageUrl),
+            backgroundImage: NetworkImage(widget.imageUrl),
           ),
           SizedBox(width: 20),
           Expanded(
@@ -47,7 +47,7 @@ class ProductCardState extends State<ProductCard> {
               children: [
                 Text('${widget.price.toStringAsFixed(2)}€', style: TextStyle(color: Colors.green)),
                 Text(widget.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                Text('${widget.weight} lbs', style: TextStyle(color: Colors.black54)),
+                Text(widget.details, style: TextStyle(color: Colors.black54), softWrap: true),
               ],
             ),
           ),
