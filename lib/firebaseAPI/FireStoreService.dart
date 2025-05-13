@@ -4,8 +4,10 @@ import '../models/Product.dart';
 import '../models/ShoppingCart.dart';
 
 class FirestoreService {
-  final CollectionReference productsCollection = FirebaseFirestore.instance.collection('products');
-  final CollectionReference cartsCollection = FirebaseFirestore.instance.collection('carts'); // Cart collection
+  final CollectionReference productsCollection =
+      FirebaseFirestore.instance.collection('products');
+  final CollectionReference cartsCollection =
+      FirebaseFirestore.instance.collection('carts'); // Cart collection
 
   // Fetch products from Database
   Future<List<Product>> fetchProducts() async {
@@ -40,7 +42,8 @@ class FirestoreService {
   }
 
   // Update a product in Database
-  Future<void> updateProduct(String productId, Map<String, dynamic> updatedProductData) async {
+  Future<void> updateProduct(
+      String productId, Map<String, dynamic> updatedProductData) async {
     try {
       await productsCollection.doc(productId).update(updatedProductData);
       print("Product updated in Database!");
@@ -52,7 +55,9 @@ class FirestoreService {
   // Update product stock in database
   Future<void> updateProductStock(String productId, int stockQuantity) async {
     try {
-      await productsCollection.doc(productId).update({'stockQuantity': stockQuantity});
+      await productsCollection
+          .doc(productId)
+          .update({'stockQuantity': stockQuantity});
       print("Product stock updated in database!");
     } catch (e) {
       print("Error updating product stock in database: $e");
@@ -75,27 +80,25 @@ class FirestoreService {
   ///////////////////////// C A R T S //////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
-
-
   // Fetch carts from Database
   Future<List<ShoppingCart>> fetchCarts() async {
     try {
       final cartsFromDatabase = await cartsCollection.get();
 
-      return cartsFromDatabase.docs.map((doc) {
+      final carts = await Future.wait(cartsFromDatabase.docs.map((doc) async {
         final data = doc.data() as Map<String, dynamic>;
-        // TODO Delete this string
-        print(data.toString());
 
-        final List<dynamic> productList = data['products'] ?? [];
+        // Fetch cart products
+        final productsSnapshot =
+            await cartsCollection.doc(doc.id).collection('products').get();
 
-        final cartProducts = productList.map((item) {
-          final productData = item as Map<String, dynamic>;
+        final cartProducts = productsSnapshot.docs.map((productDoc) {
+          final productData = productDoc.data();
           return CartProduct(
+            cartProductId: productDoc.id,
             productId: productData['productId'],
             quantity: productData['quantity'],
             isChecked: productData['isChecked'] ?? false,
-            cartProductId: '',
           );
         }).toList();
 
@@ -103,16 +106,19 @@ class FirestoreService {
           id: doc.id,
           name: data['name'],
           totalProduct: data['totalProduct'],
-          total: data['total'],
-          products: cartProducts
+          total: (data['total'] as num).toDouble(),
+          products: cartProducts,
         );
-      }).toList();
+      }).toList());
+
+      print(carts.toString());
+
+      return carts;
     } catch (e) {
       print("Error fetching carts from database: $e");
       return [];
     }
   }
-
 
   // Add a cart to Database
   Future<void> addCart(Map<String, dynamic> cartData) async {
@@ -135,8 +141,13 @@ class FirestoreService {
       final cartDoc = cartsCollection.doc(cartId);
       final cartProductsCollection = cartDoc.collection('products');
 
+      // 0. generates a random ID
+      final cartProductsCollectionWithID = cartProduct.cartProductId.isEmpty
+          ? cartProductsCollection.doc()
+          : cartProductsCollection.doc(cartProduct.cartProductId);
+
       // 1. Add the CartProduct
-      await cartProductsCollection.doc(cartProduct.cartProductId).set({
+      await cartProductsCollectionWithID.set({
         'productId': cartProduct.productId,
         'quantity': cartProduct.quantity,
         'isChecked': cartProduct.isChecked,
@@ -150,7 +161,6 @@ class FirestoreService {
       print("Error adding cartProduct: $e");
     }
   }
-
 
   // Fetch all CartProducts for a Cart
   Future<List<CartProduct>> fetchCartProducts(String cartId) async {
@@ -211,11 +221,13 @@ class FirestoreService {
       print("Error deleting cartProduct: $e");
     }
   }
+
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
 
   // Update a cart in Database
-  Future<void> updateCart(String cartId, Map<String, dynamic> updatedCartData) async {
+  Future<void> updateCart(
+      String cartId, Map<String, dynamic> updatedCartData) async {
     try {
       await cartsCollection.doc(cartId).update(updatedCartData);
       print("Cart updated in Database!");
@@ -229,11 +241,13 @@ class FirestoreService {
   Future<void> updateCartProducts(ShoppingCart cart) async {
     try {
       // Transform into a list the new products data of the cart
-      final productsData = cart.products.map((cp) => {
-        'productId': cp.productId,
-        'quantity': cp.quantity,
-        'isChecked': cp.isChecked,
-      }).toList();
+      final productsData = cart.products
+          .map((cp) => {
+                'productId': cp.productId,
+                'quantity': cp.quantity,
+                'isChecked': cp.isChecked,
+              })
+          .toList();
 
       // Update the DB with new data
       await cartsCollection.doc(cart.id).update({
@@ -260,21 +274,21 @@ class FirestoreService {
   Future<void> _recalculateCartTotals(String cartId) async {
     try {
       final cartCollection = cartsCollection.doc(cartId);
-      final cartProductsSnapshot = await cartCollection.collection('products').get();
+      final cartProductsSnapshot =
+          await cartCollection.collection('products').get();
 
       int totalQuantity = 0;
       double totalPrice = 0.0;
 
       for (var doc in cartProductsSnapshot.docs) {
         final data = doc.data();
-        final int quantity = data['quantity']?? 0;
+        final int quantity = data['quantity'] ?? 0;
         final productId = data['productId'];
 
         // Fetch product price
         final productSnapshot = await productsCollection.doc(productId).get();
         final productData = productSnapshot.data() as Map<String, dynamic>;
         final unitPrice = productData['unityPrice'] ?? 0;
-
 
         totalQuantity += quantity;
         totalPrice += quantity * unitPrice;
@@ -291,5 +305,4 @@ class FirestoreService {
       print("Error recalculating cart totals: $e");
     }
   }
-
 }
