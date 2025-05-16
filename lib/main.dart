@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/ProductProvider.dart';
+import 'package:techno_mobile/Views/products_page.dart';
 import 'package:techno_mobile/Views/shopping_lists_page.dart';
 
 import 'Provider/CartProvider.dart';
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: ShoppingListsPage(),
+            home: ProductsPage(),
           );
         });
   }

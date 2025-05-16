@@ -1,163 +1,105 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:techno_mobile/Provider/ProductProvider.dart';
-import 'package:techno_mobile/Widgets/add_product_in_list_popup.dart';
-import 'package:techno_mobile/Widgets/product_card.dart';
-import 'package:techno_mobile/Widgets/semi_round_count_box.dart';
-import 'package:techno_mobile/models/CartProduct.dart';
-import 'package:techno_mobile/models/ShoppingCart.dart';
+import 'package:techno_mobile/Widgets/product_in_list_card.dart';
+import '../Provider/CartProvider.dart';
+import '../Widgets/add_product_in_list_popup.dart';
+import '../Widgets/semi_round_count_box.dart';
 
-class ListDetailsPage extends StatefulWidget {
-  final ShoppingCart shoppingCart;
-  final int checkedCount;
-  final int totalCount;
+class ListDetailsPage extends StatelessWidget {
+  final String cartId;
 
-  const ListDetailsPage(
-      {super.key,
-      required this.shoppingCart,
-      required this.checkedCount,
-      required this.totalCount});
+  const ListDetailsPage({super.key, required this.cartId});
 
-  @override
-  State<StatefulWidget> createState() {
-    return ListDetailsPageState();
-  }
-}
-
-class ListDetailsPageState extends State<ListDetailsPage> {
   @override
   Widget build(BuildContext context) {
-    List<CartProduct> productList = widget.shoppingCart.products;
-    final productProvider =
-        Provider.of<ProductProvider>(context, listen: false).products;
+    return Consumer<CartProvider>(
+      builder: (context, cartProvider, _) {
+        final cart = cartProvider.carts.firstWhere((c) => c.id == cartId);
+        final products = cart.products;
+        final checkedCount = products.where((p) => p.isChecked).length;
+        final totalCount = products.length;
 
-    // -------------------No products were added yet--------------------
-    if (productList.isEmpty) {
-      return Scaffold(
-        appBar: AppBar(),
-        backgroundColor: Colors.grey.shade100,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            //----------------The title of this page------------------------
-            _title(),
-            //-------------------The body-----------------------------------
-            _emptyListDisplay(),
-            //-------------------The create button---------------------------
-            _addItemButton()
-          ],
-        ),
-      );
-    }
-
-    // -------------There is at least a product in the cart ----------------
-    return Scaffold(
-      appBar: AppBar(),
-      backgroundColor: Colors.grey.shade100,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          //----------------The title of this page------------------------
-          _title(),
-          //-------------------The body-----------------------------------
-          Expanded(
-            child: ListView.builder(
-                itemCount: productList.length,
-                itemBuilder: (context, index) {
-                  var product = productProvider
-                      .firstWhere((p) => p.id == productList[index].productId);
-
-                  return ProductCard(
-                    imageUrl: product.imageUrl,
-                    name: product.name,
-                    price: product.unityPrice,
-                    details: product.nutritionDetails,
-                  );
-                }),
-          ),
-          //-------------------Total Panel---------------------------------
-          Container(
-            padding: EdgeInsets.fromLTRB(16, 16, 16, 80), // Add enough bottom padding
-            color: Colors.white,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Total:',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        return Scaffold(
+          appBar: AppBar(),
+          backgroundColor: Colors.grey.shade100,
+          body: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // Title
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(cart.name,
+                        style: TextStyle(
+                            fontSize: 20.0, fontWeight: FontWeight.bold)),
+                    CountBox(
+                        checkedCount: checkedCount, totalCount: totalCount),
+                  ],
                 ),
-                Text(
-                  '${widget.shoppingCart.total}€',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+
+              // Products or empty list
+              Expanded(
+                child: products.isEmpty
+                    ? _emptyListDisplay()
+                    : ListView.builder(
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return ProductInListCard(
+                            cartId: cartId,
+                            productFromCart: products[index],
+                          );
+                        },
+                      ),
+              ),
+
+              // Total price panel
+              Container(
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 80),
+                color: Colors.white,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('Total:',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text('${cart.total.toStringAsFixed(2)}€',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-
-        ],
-      ),
-      //-------------------The create button---------------------------
-      floatingActionButton:  _addItemButton(),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-
+          floatingActionButton: _addItemButton(context, cartId),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+        );
+      },
     );
   }
 
-  // Title of the page
-  Widget _title() {
-    return Container(
-      padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.symmetric(horizontal: 18.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            widget.shoppingCart.name,
-            style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-          ),
-          CountBox(
-            checkedCount: widget.checkedCount,
-            totalCount: widget.totalCount,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // Method of list display
   Widget _emptyListDisplay() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-      margin:  const EdgeInsets.symmetric(vertical: 140.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Image.asset('assets/emptyList.png', height: 200),
-          const Text(
-            "Your list is empty",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18.0),
-          ),
-          const Text(
-            "Click the button below to add an item now",
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 18.0),
-          ),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset('assets/emptyList.png', height: 200),
+        Text("Your list is empty", style: TextStyle(fontSize: 18.0)),
+        Text("Click the button below to add an item now",
+            style: TextStyle(fontSize: 18.0)),
+      ],
     );
   }
 
-  // Method of "Add item" button
-  Widget _addItemButton() {
+  Widget _addItemButton(BuildContext context, String cartID) {
     return TextButton.icon(
       onPressed: () {
         showDialog(
           context: context,
           builder: (_) => Dialog(
-            child: AddProductInListPopup(
-              selectedCartId: widget.shoppingCart.id,
-            ),
+            child: AddProductInListPopup(selectedCartId: cartID),
           ),
         );
       },
@@ -167,13 +109,12 @@ class ListDetailsPageState extends State<ListDetailsPage> {
         style: TextStyle(color: Colors.white, fontSize: 18.0),
       ),
       style: TextButton.styleFrom(
-        backgroundColor: Colors.lightGreen.shade600,
-        padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
-        ),
-        fixedSize: Size(280, 50)
-      ),
+          backgroundColor: Colors.lightGreen.shade600,
+          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 10.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+          ),
+          fixedSize: Size(280, 50)),
     );
   }
 }

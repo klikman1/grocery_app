@@ -1,79 +1,88 @@
 import 'package:flutter/material.dart';
 
 class ProductCard extends StatefulWidget {
-  final String imageUrl;
-  final String name;
-  final double price;
-  final String details;
-
-  const ProductCard({
-    required this.imageUrl,
-    required this.name,
-    required this.price,
-    required this.details,
-    super.key,
-  });
+  const ProductCard({super.key});
 
   @override
-  State<ProductCard> createState() {
+  State<StatefulWidget> createState() {
     return ProductCardState();
   }
 }
 
 class ProductCardState extends State<ProductCard> {
-  int quantity = 1;
-  bool isChecked = false;
+  bool isAdded = false;
+
+  void toggleCartStatus() {
+    setState(() {
+      isAdded = !isAdded;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 0),
-      margin: EdgeInsets.symmetric(vertical: 6, horizontal: 10),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+      margin: const EdgeInsets.all(8.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.white38,
+            blurRadius: 6,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(
-            radius: 40,
-            backgroundImage: NetworkImage(widget.imageUrl),
-          ),
-          SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('${widget.price.toStringAsFixed(2)}€', style: TextStyle(color: Colors.green)),
-                Text(widget.name, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                Text(widget.details, style: TextStyle(color: Colors.black54), softWrap: true),
-              ],
+          ClipOval(
+            child: Image.asset(
+              "assets/logo_light.png",
+              width: 120,
+              height: 120,
+              fit: BoxFit.cover,
             ),
           ),
-          Column(
-            children: [
-              IconButton(
-                icon: Icon(Icons.add, color: Colors.green),
-                onPressed: () => setState(() => quantity++),
-              ),
-              Text(quantity.toString(), style: TextStyle(fontSize: 16, color: Colors.grey)),
-              IconButton(
-                icon: Icon(Icons.remove, color: Colors.green),
-                onPressed: () {
-                  if (quantity > 1) {
-                    setState(() => quantity--);
-                  }
-                },
-              ),
-            ],
+
+          const SizedBox(height: 12.0),
+
+          Text(
+            "3.00 €",
+            style: TextStyle(
+              color: Colors.lightGreen[700],
+              fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          IconButton(
+          const Text(
+            "Fresh Broccoli",
+            style: TextStyle(
+              fontSize: 18.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Text(
+            "1 kg",
+            style: TextStyle(
+              color: Colors.grey,
+              fontSize: 16.0,
+            ),
+          ),
+
+          const SizedBox(height: 8.0),
+
+          TextButton.icon(
+            onPressed: toggleCartStatus,
             icon: Icon(
-              isChecked ? Icons.check_box : Icons.check_box_outline_blank,
-              color: Colors.green,
+              isAdded ? Icons.check_circle : Icons.shopping_bag_outlined,
+              color: isAdded ? Colors.green : Colors.lightGreen,
             ),
-            onPressed: () => setState(() => isChecked = !isChecked),
+            label: Text(isAdded ? "Added" : "Add to cart"),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.black,
+            ),
           ),
         ],
       ),

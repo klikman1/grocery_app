@@ -205,6 +205,22 @@ class FirestoreService {
     }
   }
 
+  // Update a CartProduct quantity
+  Future<void> updateCartProductQuantity(String cartId, String cartProductId, int quantity) async {
+    try {
+      final cartDoc = cartsCollection.doc(cartId);
+      final cartProductDoc = cartDoc.collection('products').doc(cartProductId);
+
+      await cartProductDoc.update({'quantity': quantity});
+
+      await _recalculateCartTotals(cartId);
+
+      print("Cart product quantity updated!");
+    } catch (e) {
+      print("Error updating cartProduct quantity: $e");
+    }
+  }
+
   // Delete a CartProduct
   Future<void> deleteCartProduct(String cartId, String cartProductId) async {
     try {
