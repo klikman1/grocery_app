@@ -18,54 +18,60 @@ class ShoppingListCard extends StatefulWidget {
 class ShoppingListCardState extends State<ShoppingListCard> {
   @override
   Widget build(BuildContext context) {
-    final specificCart = Provider.of<CartProvider>(context, listen: false)
-        .carts
-        .firstWhere((cart) => cart.id == widget.cartId);
+    return Consumer<CartProvider>(
+      builder: (context, provider, child) {
+        final specificCart =
+            provider.carts.firstWhere((cart) => cart.id == widget.cartId);
 
-    // Total number of products
-    final totalCount = specificCart.products.length;
+        // Total number of products
+        final totalCount = specificCart.products.length;
 
-    // Total number of checked products
-    final checkedCount = specificCart.products.where((p) => p.isChecked).length;
+        // Total number of checked products
+        final checkedCount =
+            specificCart.products.where((p) => p.isChecked).length;
 
-
-    return Card(
-      elevation: 6.0,
-      margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: ListTile(
-        contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
-        //------------- List title and its products-----------------------
-        leading: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              specificCart.name,
-              style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+        return Card(
+          elevation: 6.0,
+          margin: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: ListTile(
+            contentPadding:
+                EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+            //------------- List title and its products-----------------------
+            leading: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  specificCart.name,
+                  style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4.0),
+                Text(
+                  "Read me",
+                  style: TextStyle(
+                    fontSize: 12.0,
+                    color: Colors.black54,
+                  ),
+                )
+              ],
             ),
-            const SizedBox(height: 4.0),
-            Text(
-              "Read me",
-              style: TextStyle(
-                fontSize: 12.0,
-                color: Colors.black54,
-              ),
-            )
-          ],
-        ),
 
-        //------------------------Semi-round count box ------------------
-        trailing: CountBox(checkedCount: checkedCount, totalCount: totalCount),
-        onTap: () {
-          // Navigates to the list details page
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ListDetailsPage(shoppingCart: specificCart, checkedCount: checkedCount, totalCount: totalCount),
-            ),
-          );
-        },
-      ),
+            //------------------------Semi-round count box ------------------
+            trailing:
+                CountBox(checkedCount: checkedCount, totalCount: totalCount),
+            onTap: () {
+              // Navigates to the list details page
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      ListDetailsPage(cartId: specificCart.id),
+                ),
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

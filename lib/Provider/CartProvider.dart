@@ -46,6 +46,15 @@ class CartProvider extends ChangeNotifier {
     await fetchCarts();
   }
 
+  // Update a CartProduct quantity in the cart
+  Future<void> updateCartProductQuantity(String cartId, String cartProductId, int newQuantity) async {
+    print(newQuantity);
+
+    await _firestoreService.updateCartProductQuantity(cartId, cartProductId, newQuantity);
+    notifyListeners();
+
+  }
+
   // Remove a CartProduct from the cart
   Future<void> deleteCartProduct(String cartId, String cartProductId) async {
     await _firestoreService.deleteCartProduct(cartId, cartProductId);
@@ -64,8 +73,41 @@ class CartProvider extends ChangeNotifier {
 
   // Delete a cart
   Future<void> deleteCart(String cartId) async {
+    final cart = _carts.firstWhere((cart) => cart.id == cartId);
+
+    // Delete each CartProduct from Firestore
+    for (final product in cart.products) {
+      await _firestoreService.deleteCartProduct(cartId, product.cartProductId);
+    }
+
+    // Then delete the cart from Firestore
+    await _firestoreService.deleteCart(cartId);
+
+    // Finally, remove it locally and notify
     _carts.removeWhere((cart) => cart.id == cartId);
     notifyListeners();
-    await _firestoreService.deleteCart(cartId);
+    }
+
+
+  // Given the ID, returns the product stored in the cart
+  CartProduct getCartProductById(String cartId, String cartProductId) {
+    final cart = _carts.firstWhere((c) => c.id == cartId);
+    return cart.products.firstWhere((p) => p.cartProductId == cartProductId);
   }
+
+  // Return the quantity of the product in a cart
+  int getQuantity(String cartId, String cartProductId) {
+    final product = getCartProductById(cartId, cartProductId);
+
+    return product.quantity ?? 0;
+  }
+
+  void toggleCartProductCheck(String cartId, String productId) {
+    final cartProduct = getCartProductById(cartId, productId);
+    if (cartProduct != null) {
+      cartProduct.isChecked = !cartProduct.isChecked;
+      notifyListeners();
+    }
+  }
+
 }
