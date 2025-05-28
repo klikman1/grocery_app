@@ -55,6 +55,19 @@ class CartProvider extends ChangeNotifier {
 
   }
 
+  // Check if a product is in any cart
+  bool isProductInAnyCart(String productId) {
+    for (final cart in _carts) {
+      for (final cartProduct in cart.products) {
+        if (cartProduct.productId == productId) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+
   // Remove a CartProduct from the cart
   Future<void> deleteCartProduct(String cartId, String cartProductId) async {
     await _firestoreService.deleteCartProduct(cartId, cartProductId);

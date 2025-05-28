@@ -1,32 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:techno_mobile/Provider/ProductProvider.dart';
 import 'package:techno_mobile/Widgets/product_card.dart';
 
-class ProductsPage extends StatelessWidget {
+class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
 
   @override
+  State<ProductsPage> createState() => _ProductsPageState();
+}
+
+class _ProductsPageState extends State<ProductsPage> {
+  bool _isInit = true;
+  bool _isLoading = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_isInit) {
+      _isLoading = true;
+      Provider.of<ProductProvider>(context, listen: false)
+          .fetchProducts()
+          .then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+      _isInit = false;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<Widget> productList = [
-      ProductCard(),
-      ProductCard(),
-      ProductCard(),
-      ProductCard(),
-      ProductCard(),
-      ProductCard(),
-      ProductCard(),
-    ];
+    final productsFromDB = Provider.of<ProductProvider>(context).products;
+    print("Loaded products count: ${productsFromDB.length}");
 
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
       ),
-      body: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 18.0),
+      backgroundColor: Colors.grey[100],
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 18.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 👇 Search bar below AppBar
+            // 🔍 Search Bar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
               decoration: BoxDecoration(
@@ -41,30 +61,38 @@ class ProductsPage extends StatelessWidget {
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
+
             const Text(
-              "Featured products",
+              "All products",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
             ),
+
             const SizedBox(height: 10),
+
+            // 🧺 Grid of Product Cards
             Expanded(
-              child: GridView.builder(
-                itemCount: productList.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : productsFromDB.isEmpty
+                  ? const Center(child: Text("No products found"))
+                  : GridView.builder(
+                itemCount: productsFromDB.length,
+                gridDelegate:
+                const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  childAspectRatio: 0.70,
+                  childAspectRatio: 0.62,
                 ),
                 itemBuilder: (context, index) {
-                  return productList[index];
+                  final product = productsFromDB[index];
+                  return ProductCard(productId: product.id);
                 },
               ),
             ),
           ],
         ),
       ),
-      backgroundColor: Colors.grey[100],
     );
-
-
   }
 }

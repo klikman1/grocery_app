@@ -1,11 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/ProductProvider.dart';
-import 'package:techno_mobile/Views/products_page.dart';
-import 'package:techno_mobile/Views/shopping_lists_page.dart';
-
+import 'package:techno_mobile/Views/home_page.dart';
 import 'Provider/CartProvider.dart';
 import 'firebase_options.dart';
 
@@ -33,7 +30,7 @@ class MyApp extends StatelessWidget {
         builder: (context, child) {
           return MaterialApp(
             debugShowCheckedModeBanner: false,
-            home: ProductsPage(),
+            home: HomePageScreen(),
           );
         });
   }
