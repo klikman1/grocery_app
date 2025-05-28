@@ -71,7 +71,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
             const SizedBox(height: 10),
 
-            // 🧺 Grid of Product Cards
+            // Grid of Product Cards
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())

@@ -75,7 +75,6 @@ class _AddProductInListPopupState extends State<AddProductInListPopup> {
                             quantity: 1,
                             isChecked: false,
                           ),
-                          product.unityPrice,
                         );
                         Navigator.of(context).pop();
                       },
