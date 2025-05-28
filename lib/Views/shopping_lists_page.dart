@@ -30,8 +30,8 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Shopping list page title text
-    Widget _title() {
+    /// Shopping list page title text
+    Widget title() {
       return Text(
         "Your shopping Lists",
         style: TextStyle(
@@ -39,6 +39,61 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
           fontSize: 24.0,
           fontWeight: FontWeight.bold,
         ),
+      );
+    }
+
+    /// Alert dialog for editing the cart name
+    Widget editDialog(BuildContext context, CartProvider provider,
+        TextEditingController controllerName, String cartId) {
+      return AlertDialog(
+        //--------------------Title of the dialog-------------------------------
+        title: const Text('Edit Cart Name',
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
+
+        //------------------Content of the dialog--------------------------------
+        content: TextField(
+          controller: controllerName,
+          decoration: InputDecoration(
+            hintText: 'Enter new name',
+            filled: true,
+            fillColor: Colors.grey.shade300,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.0),
+              borderSide: BorderSide.none,
+            ),
+          ),
+        ),
+
+        //-------------------Cancel and Continue Buttons-----------------------
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              backgroundColor: Colors.lightGreen.shade600,
+              padding: EdgeInsets.symmetric(horizontal: 35.0),
+            ),
+            child: const Text('Cancel', style: TextStyle(color: Colors.white)),
+          ),
+          TextButton(
+            style: TextButton.styleFrom(
+                backgroundColor: Colors.lightGreen.shade600,
+                padding: EdgeInsets.symmetric(horizontal: 35.0)),
+            onPressed: () {
+              final newName = controllerName.text.trim();
+              if (newName.isNotEmpty) {
+                // Update the cart name in the provider
+                provider.updateCartName(cartId, newName);
+
+                // Show a success message
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Cart name updated!')),
+                );
+              }
+              Navigator.of(context).pop();
+            },
+            child: const Text('Save', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       );
     }
 
@@ -52,7 +107,7 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 //----------------The title of this page------------------------
-                _title(),
+                title(),
                 //-------------------The body-----------------------------------
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 12.0),
@@ -106,7 +161,7 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                   //----------------The title of this page------------------------
                   SizedBox(
                     height: 100,
-                    child: Center(child: _title()),
+                    child: Center(child: title()),
                   ),
                   //--------------------Groceries list --------------------
                   Flexible(
@@ -122,16 +177,18 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                                   color: Colors.blueAccent),
                               onPress: () {
                                 final cartNameController =
-                                    TextEditingController(text: cart.name);
+                                    TextEditingController(
+                                  text: cart.name,
+                                );
 
-                                // Edit the Cart's name
+                                /// Edit the Cart's name
                                 showDialog(
                                   context: context,
                                   // Prevents dismissing by tapping outside
                                   barrierDismissible: false,
                                   builder: (BuildContext context) {
-                                    return Container();
-                                    // TODO Implement the edit part
+                                    return editDialog(context, provider,
+                                        cartNameController, cart.id);
                                   },
                                 );
                               },
@@ -140,10 +197,9 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                             ActionItems(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPress: () {
-                                // Delete cart
+                                /// Delete cart
                                 provider.deleteCart(cart.id);
-
-                                // Show a snack bar
+                                /// Show a snack bar
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content:
@@ -154,6 +210,7 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                               backgroudColor: Colors.transparent,
                             ),
                           ],
+                          //---- Display the shopping list card --------------
                           child: ShoppingListCard(cartId: cart.id),
                         );
                       },

@@ -45,13 +45,18 @@ class ProductInListCardState extends State<ProductInListCard> {
       ),
       child: Row(
         children: [
+          // ----------------------Product image ----------------------------
           CircleAvatar(
             radius: 40,
             backgroundImage: NetworkImage(foundProduct.imageUrl),
           ),
+
           SizedBox(width: 20),
+
+          // -----------------------Product details--------------------------
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text('${foundProduct.unityPrice.toStringAsFixed(2)}€',
@@ -65,6 +70,7 @@ class ProductInListCardState extends State<ProductInListCard> {
             ),
           ),
 
+          // -----------------------Quantity and checkbox -------------------
           Consumer<CartProvider>(
             builder: (context, cartProvider, child) {
               final cartId = widget.cartId;
