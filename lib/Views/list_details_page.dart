@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:slideable/slideable.dart';
 import 'package:techno_mobile/Widgets/product_in_list_card.dart';
+import 'package:techno_mobile/models/CartProduct.dart';
 import '../Provider/CartProvider.dart';
 import '../Widgets/add_product_in_list_popup.dart';
 import '../Widgets/semi_round_count_box.dart';
@@ -25,7 +27,7 @@ class ListDetailsPage extends StatelessWidget {
           body: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Title
+              //----------------------Cart name-------------------------------
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
@@ -40,22 +42,14 @@ class ListDetailsPage extends StatelessWidget {
                 ),
               ),
 
-              // Products or empty list
+              // ---------------------Products or empty list--------------------
               Expanded(
                 child: products.isEmpty
-                    ? _emptyListDisplay()
-                    : ListView.builder(
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          return ProductInListCard(
-                            cartId: cartId,
-                            productFromCart: products[index],
-                          );
-                        },
-                      ),
+                    ? emptyListDisplay() // When shopping list is empty
+                    : productListDisplay(products, cartId, cartProvider),
               ),
 
-              // Total price panel
+              //--------------------Total price panel --------------------------
               Container(
                 padding: EdgeInsets.fromLTRB(16, 16, 16, 80),
                 color: Colors.white,
@@ -81,7 +75,8 @@ class ListDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _emptyListDisplay() {
+  /// Content when Shopping list is empty
+  Widget emptyListDisplay() {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -90,6 +85,38 @@ class ListDetailsPage extends StatelessWidget {
         Text("Click the button below to add an item now",
             style: TextStyle(fontSize: 18.0)),
       ],
+    );
+  }
+
+  /// Display products that are in the shopping list
+  Widget productListDisplay(List<CartProduct> cartProducts, String cartID, CartProvider provider) {
+    return ListView.builder(
+      itemCount: cartProducts.length,
+      itemBuilder: (context, index) {
+        return Slideable(
+          items: [
+            ActionItems(
+              icon: const Icon(Icons.delete, color: Colors.red),
+              onPress: () {
+                // Delete cart product
+                provider.deleteCartProduct(cartID, cartProducts[index].cartProductId);
+                // Show a snack bar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content:
+                    Text('The product has been deleted'),
+                  ),
+                );
+              },
+              backgroudColor: Colors.transparent,
+            ),
+          ],
+          child: ProductInListCard(
+            cartId: cartID,
+            productFromCart: cartProducts[index],
+          ),
+        );
+      },
     );
   }
 
