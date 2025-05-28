@@ -46,6 +46,7 @@ dependencies:
   camera: ^0.11.0+2
   saver_gallery: ^4.0.1
 
+
 #dependency_overrides:
 #  path_provider: ^2.0.15
 #  permission_handler: ^11.0.1
