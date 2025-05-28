@@ -69,6 +69,16 @@ class CartProvider extends ChangeNotifier {
     return false;
   }
 
+  // Toggle the checkbox of a cart product
+  Future<void> toggleCartProductCheck(String cartId, String productId) async {
+    final cartProduct = getCartProductById(cartId, productId);
+
+    if (cartProduct != null) {
+      cartProduct.isChecked = !cartProduct.isChecked;
+      await _firestoreService.updateCartProduct(cartId, cartProduct);
+      notifyListeners();
+    }
+  }
 
   // Remove a CartProduct from the cart
   Future<void> deleteCartProduct(String cartId, String cartProductId) async {
@@ -117,14 +127,5 @@ class CartProvider extends ChangeNotifier {
     return product.quantity ?? 0;
   }
 
-  Future<void> toggleCartProductCheck(String cartId, String productId) async {
-    final cartProduct = getCartProductById(cartId, productId);
-
-    if (cartProduct != null) {
-      cartProduct.isChecked = !cartProduct.isChecked;
-      await _firestoreService.updateCartProduct(cartId, cartProduct);
-      notifyListeners();
-    }
-  }
 
 }
