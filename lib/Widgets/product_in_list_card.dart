@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:techno_mobile/Widgets/round_image_widget.dart';
 import 'package:techno_mobile/models/CartProduct.dart';
 
 import '../Provider/CartProvider.dart';
@@ -46,10 +47,7 @@ class ProductInListCardState extends State<ProductInListCard> {
       child: Row(
         children: [
           // ----------------------Product image ----------------------------
-          CircleAvatar(
-            radius: 40,
-            backgroundImage: NetworkImage(foundProduct.imageUrl),
-          ),
+          RoundImageWidget(imageLink: foundProduct.imageUrl, size: 100),
 
           SizedBox(width: 20),
 

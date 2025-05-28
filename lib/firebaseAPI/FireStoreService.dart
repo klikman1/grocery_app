@@ -121,12 +121,14 @@ class FirestoreService {
   }
 
   // Add a cart to Database
-  Future<void> addCart(Map<String, dynamic> cartData) async {
+  Future<String> addCart(Map<String, dynamic> cartData) async {
     try {
-      await cartsCollection.add(cartData);
+      final docRef = await cartsCollection.add(cartData);
       print("Cart added to Database!");
+      return docRef.id;
     } catch (e) {
       print("Error adding cart to Database: $e");
+      return e.toString();
     }
   }
 

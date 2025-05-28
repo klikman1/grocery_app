@@ -1,9 +1,11 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:techno_mobile/Widgets/round_image_widget.dart';
+import 'package:techno_mobile/models/CartProduct.dart';
+import '../Provider/CartProvider.dart';
 import '../Provider/ProductProvider.dart';
 import '../Views/product_details_page.dart';
+import '../models/Product.dart';
 
 class ProductCard extends StatefulWidget {
   final String productId;
@@ -23,6 +25,57 @@ class ProductCardState extends State<ProductCard> {
     setState(() {
       isAdded = !isAdded;
     });
+  }
+
+  void addProductToCart(BuildContext context, Product product) async {
+    final cartProvider = Provider.of<CartProvider>(context, listen: false);
+    final carts = cartProvider.carts;
+
+    CartProduct newCartProduct = CartProduct(
+      cartProductId: '',
+      productId: product.id,
+      quantity: 1,
+      isChecked: false,
+    );
+
+    // Create a new cart and add the product
+    if (carts.isEmpty) {
+      final newCartId = await cartProvider.createCart("My List");
+      cartProvider.addCartProduct(newCartId, newCartProduct);
+      // Change the button text
+      toggleCartStatus();
+    }
+    // Added the product in the single existing cart
+    else if (carts.length == 1) {
+      cartProvider.addCartProduct(carts.first.id, newCartProduct);
+      // Change the button text
+      toggleCartStatus();
+    }
+    // Let the user choose which cart before adding the product
+    else {
+      showModalBottomSheet(
+        context: context,
+
+        builder: (_) {
+          return ListView(
+            children: carts.map((cart) {
+              return ListTile(
+
+                title: Text(cart.name),
+                onTap: () {
+                  cartProvider.addCartProduct(cart.id, newCartProduct);
+                  Navigator.pop(context);
+                  // Change the button text
+                  toggleCartStatus();
+                },
+              );
+            }).toList(),
+          );
+        },
+      );
+    }
+
+
   }
 
   @override
@@ -57,21 +110,7 @@ class ProductCardState extends State<ProductCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(
-              width: 120,
-              height: 120,
-              child: ClipOval(
-                child: (product.imageUrl.startsWith('http')
-                    ? Image.network(
-                        product.imageUrl,
-                        fit: BoxFit.cover,
-                      )
-                    : Image.file(
-                        File(product.imageUrl),
-                        fit: BoxFit.cover,
-                      )),
-              ),
-            ),
+            RoundImageWidget(imageLink: product.imageUrl),
             const SizedBox(height: 12.0),
             Text(
               "${product.unityPrice.toStringAsFixed(2)} €",
@@ -100,7 +139,9 @@ class ProductCardState extends State<ProductCard> {
             ),
             const SizedBox(height: 4.0),
             TextButton.icon(
-              onPressed: toggleCartStatus,
+              onPressed: () => isAdded == false
+                  ? addProductToCart(context, product)
+                  : toggleCartStatus,
               icon: Icon(
                 isAdded ? Icons.check_circle : Icons.shopping_bag_outlined,
                 color: isAdded ? Colors.green : Colors.lightGreen,

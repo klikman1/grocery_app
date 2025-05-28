@@ -23,19 +23,21 @@ class CartProvider extends ChangeNotifier {
   }
 
   // Create a cart
-  Future<void> createCart(String name) async {
-    await _firestoreService.addCart({
+  Future<String> createCart(String name) async {
+    final cartId = await _firestoreService.addCart({
       'name': name,
       'totalProduct': 0,
       'total': 0.0,
     });
 
-    fetchCarts();
+    await fetchCarts();
     notifyListeners();
+    return cartId; // Return the new cart ID
   }
 
+
   // Add a CartProduct to the cart
-  Future<void> addCartProduct(String cartId, CartProduct cartProduct, double unitPrice) async {
+  Future<void> addCartProduct(String cartId, CartProduct cartProduct) async {
     await _firestoreService.addCartProduct(cartId, cartProduct);
     await fetchCarts();
   }
@@ -115,10 +117,12 @@ class CartProvider extends ChangeNotifier {
     return product.quantity ?? 0;
   }
 
-  void toggleCartProductCheck(String cartId, String productId) {
+  Future<void> toggleCartProductCheck(String cartId, String productId) async {
     final cartProduct = getCartProductById(cartId, productId);
+
     if (cartProduct != null) {
       cartProduct.isChecked = !cartProduct.isChecked;
+      await _firestoreService.updateCartProduct(cartId, cartProduct);
       notifyListeners();
     }
   }
