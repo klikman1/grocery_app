@@ -35,6 +35,7 @@ class EditProductPageState extends State<EditProductPage> {
 
   final ImagePicker _picker = ImagePicker();
 
+  // Show bottom sheet with options to choose image source
   void _showImageSourceOptions(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -70,6 +71,7 @@ class EditProductPageState extends State<EditProductPage> {
     descriptionController = TextEditingController(text: widget.description);
   }
 
+  // Pick image from Gallery or Camera
   Future<void> _pickImage(ImageSource source) async {
     final picked = await _picker.pickImage(source: source);
     if (picked != null) {
@@ -102,27 +104,29 @@ class EditProductPageState extends State<EditProductPage> {
                 ),
               ),
               SizedBox(height: 20),
+              //------------------Product's name text field--------------------
               TextField(
                 controller: nameController,
                 decoration: InputDecoration(labelText: "Product Name"),
               ),
+
+              //------------------Product's price text field-------------------
               TextField(
                 controller: priceController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(labelText: "Price (€) "),
               ),
+
+              //------------------Product's description text field-------------
               TextField(
                 controller: descriptionController,
                 decoration: InputDecoration(labelText: "Description/ Nutrition details"),
               ),
               SizedBox(height: 20),
+
+              //------------------------ Save changes -------------------------
               ElevatedButton(
                 onPressed: () async {
-
-                  print("Name: ${nameController.text}");
-                  print("Price: ${priceController.text}");
-                  print("Description: ${descriptionController.text}");
-
                   final provider =
                       Provider.of<ProductProvider>(context, listen: false);
 

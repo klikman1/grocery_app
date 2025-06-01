@@ -24,16 +24,14 @@ class ProductInListCard extends StatefulWidget {
 
 class ProductInListCardState extends State<ProductInListCard> {
 
-  // TODO: Quantity isn't being updated in the interface. Check box not updated in the DB
   @override
   Widget build(BuildContext context) {
     // Get all products from DB to fetch product details
-    final productProvider =
-        Provider.of<ProductProvider>(context, listen: false).products;
+    final productProvider = Provider.of<ProductProvider>(context).products;
 
     // Get the actual product (not just the cart info)
     final foundProduct = productProvider.firstWhere(
-          (p) => p.id == widget.productFromCart.productId,
+      (p) => p.id == widget.productFromCart.productId,
     );
 
     return Container(
@@ -61,7 +59,7 @@ class ProductInListCardState extends State<ProductInListCard> {
                     style: TextStyle(color: Colors.green)),
                 Text(foundProduct.name,
                     style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
                 Text(foundProduct.nutritionDetails,
                     style: TextStyle(color: Colors.black54), softWrap: true),
               ],
@@ -73,11 +71,12 @@ class ProductInListCardState extends State<ProductInListCard> {
             builder: (context, cartProvider, child) {
               final cartId = widget.cartId;
               final cartProductId = widget.productFromCart.cartProductId;
-              final cartProduct = cartProvider.getCartProductById(cartId, cartProductId);
+              final cartProduct =
+                  cartProvider.getCartProductById(cartId, cartProductId);
 
               if (cartProduct == null) return SizedBox();
 
-              final quantity = cartProduct.quantity;
+              var quantity = cartProduct.quantity;
               final isChecked = cartProduct.isChecked;
 
               return Row(
@@ -86,9 +85,10 @@ class ProductInListCardState extends State<ProductInListCard> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.add, color: Colors.green),
-                        onPressed: () {
-                          cartProvider.updateCartProductQuantity(
-                              cartId, cartProductId, quantity + 1);
+                        onPressed: () async {
+                          quantity += 1;
+                          await cartProvider.updateCartProductQuantity(
+                              cartId, cartProductId, quantity);
                         },
                       ),
                       Text(
@@ -96,23 +96,28 @@ class ProductInListCardState extends State<ProductInListCard> {
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       IconButton(
-                        icon: Icon(Icons.remove, color: Colors.green),
-                        onPressed: () {
-                          if (quantity > 1) {
-                            cartProvider.updateCartProductQuantity(
-                                cartId, cartProductId, quantity - 1);
-                          }
-                        },
+                        icon: Icon(Icons.remove,
+                            color: quantity > 1 ? Colors.green : Colors.grey,),
+                        onPressed: quantity > 1
+                            ? () async {
+                          quantity -= 1;
+                          await cartProvider.updateCartProductQuantity(
+                                    cartId, cartProductId, quantity);
+                              }
+                            : null,
                       ),
                     ],
                   ),
                   IconButton(
                     icon: Icon(
-                      isChecked ? Icons.check_box : Icons.check_box_outline_blank,
+                      isChecked
+                          ? Icons.check_box
+                          : Icons.check_box_outline_blank,
                       color: Colors.green,
                     ),
                     onPressed: () {
-                      cartProvider.toggleCartProductCheck(cartId, cartProductId);
+                      cartProvider.toggleCartProductCheck(
+                          cartId, cartProductId);
                     },
                   ),
                 ],
@@ -124,4 +129,3 @@ class ProductInListCardState extends State<ProductInListCard> {
     );
   }
 }
-

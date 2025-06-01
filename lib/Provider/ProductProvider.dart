@@ -24,8 +24,7 @@ class ProductProvider extends ChangeNotifier {
   }
 
   // Create a new product and add it to both the list and Database
-  Future<void> createProduct(String pName, int pStockQuantity, double pUnityPrice,
-      String pNutritionDetails, String pImageUrl) async {
+  Future<void> createProduct(String pName, int pStockQuantity, double pUnityPrice, String pNutritionDetails, String pImageUrl) async {
     final newProduct = Product(
       id: DateTime.now().toString(),
       name: pName,
