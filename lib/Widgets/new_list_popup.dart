@@ -64,7 +64,7 @@ class NewListPopupState extends State<NewListPopup> {
           ),
         ),
         const SizedBox(
-          width: 15.0,
+          width: 15.0
         ),
         TextButton(
           onPressed: () {

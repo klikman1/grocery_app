@@ -12,6 +12,7 @@ class ProductDetailsPage extends StatelessWidget {
 
   const ProductDetailsPage({super.key, required this.product});
 
+  /// Pop up to confirm if you are deleting the product
   void confirmAndDelete(
     BuildContext context,
     ProductProvider productProvider,
@@ -52,10 +53,11 @@ class ProductDetailsPage extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () => Navigator.of(ctx).pop(true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text(
               "Delete",
               style:
-                  TextStyle(backgroundColor: Colors.red, color: Colors.white),
+                  TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -68,6 +70,7 @@ class ProductDetailsPage extends StatelessWidget {
     }
   }
 
+  /// Button to direct to edit page
   Widget getEditButton(BuildContext context) {
     return IconButton(
       icon: const Icon(Icons.edit),
@@ -88,6 +91,7 @@ class ProductDetailsPage extends StatelessWidget {
     );
   }
 
+  /// Product image widget
   Widget getProductImage() {
     // Check if the image is from internet
     if (product.imageUrl.startsWith('http')) {
@@ -112,6 +116,7 @@ class ProductDetailsPage extends StatelessWidget {
     }
   }
 
+  /// Price and title widget
   Widget getPriceAndTitle() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -129,6 +134,7 @@ class ProductDetailsPage extends StatelessWidget {
     );
   }
 
+  /// Description widget
   Widget getDescription() {
     return Text(
       product.nutritionDetails,
@@ -136,8 +142,8 @@ class ProductDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget buildProductInfoPart(
-      BuildContext context, ProductProvider givenProvider) {
+  /// Product info (image, name, price) widget
+  Widget buildProductInfoPart(BuildContext context, ProductProvider givenProvider) {
     return Container(
       height: 450,
       padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
@@ -158,11 +164,10 @@ class ProductDetailsPage extends StatelessWidget {
             child: Center(
               child: ElevatedButton.icon(
                 onPressed: () => confirmAndDelete(context, givenProvider, product),
-                icon: const Icon(Icons.delete),
-                label: const Text("Delete Product"),
+                icon: const Icon(Icons.delete, color: Colors.white,),
+                label: const Text("Delete Product", style: TextStyle(color: Colors.white),),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
-                  foregroundColor: Colors.white,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),

@@ -7,19 +7,27 @@ import '../Provider/CartProvider.dart';
 import '../Widgets/add_product_in_list_popup.dart';
 import '../Widgets/semi_round_count_box.dart';
 
-class ListDetailsPage extends StatelessWidget {
+class ListDetailsPage extends StatefulWidget {
   final String cartId;
 
   const ListDetailsPage({super.key, required this.cartId});
 
   @override
+  State<ListDetailsPage> createState() {
+    return ListDetailsPageState();
+  }
+}
+
+class ListDetailsPageState extends State<ListDetailsPage> {
+  @override
   Widget build(BuildContext context) {
     return Consumer<CartProvider>(
       builder: (context, cartProvider, _) {
-        final cart = cartProvider.carts.firstWhere((c) => c.id == cartId);
-        final products = cart.products;
-        final checkedCount = products.where((p) => p.isChecked).length;
-        final totalCount = products.length;
+        final cart =
+            cartProvider.carts.firstWhere((c) => c.id == widget.cartId);
+        final cartProducts = cart.products;
+        final checkedCount = cartProducts.where((p) => p.isChecked).length;
+        final totalCount = cartProducts.length;
 
         return Scaffold(
           appBar: AppBar(),
@@ -44,9 +52,10 @@ class ListDetailsPage extends StatelessWidget {
 
               // ---------------------Products or empty list--------------------
               Expanded(
-                child: products.isEmpty
+                child: cartProducts.isEmpty
                     ? emptyListDisplay() // When shopping list is empty
-                    : productListDisplay(products, cartId, cartProvider),
+                    : displayListOfProducts(
+                        cartProducts, widget.cartId, cartProvider),
               ),
 
               //--------------------Total price panel --------------------------
@@ -56,18 +65,22 @@ class ListDetailsPage extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Total:',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
-                    Text('${cart.total.toStringAsFixed(2)}€',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(
+                      'Total:',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      '${cart.total.toStringAsFixed(2)}€',
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
                   ],
                 ),
               ),
             ],
           ),
-          floatingActionButton: _addItemButton(context, cartId),
+          floatingActionButton: _addItemButton(context, widget.cartId),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
         );
@@ -89,7 +102,7 @@ class ListDetailsPage extends StatelessWidget {
   }
 
   /// Display products that are in the shopping list
-  Widget productListDisplay(List<CartProduct> cartProducts, String cartID, CartProvider provider) {
+  Widget displayListOfProducts(List<CartProduct> cartProducts, String cartID, CartProvider provider) {
     return ListView.builder(
       itemCount: cartProducts.length,
       itemBuilder: (context, index) {
@@ -99,12 +112,12 @@ class ListDetailsPage extends StatelessWidget {
               icon: const Icon(Icons.delete, color: Colors.red),
               onPress: () {
                 // Delete cart product
-                provider.deleteCartProduct(cartID, cartProducts[index].cartProductId);
+                provider.deleteCartProduct(
+                    cartID, cartProducts[index].cartProductId);
                 // Show a snack bar
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                    content:
-                    Text('The product has been deleted'),
+                    content: Text('The product has been deleted'),
                   ),
                 );
               },
@@ -120,6 +133,7 @@ class ListDetailsPage extends StatelessWidget {
     );
   }
 
+  /// Add Item button
   Widget _addItemButton(BuildContext context, String cartID) {
     return TextButton.icon(
       onPressed: () {

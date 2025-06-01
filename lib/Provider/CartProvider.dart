@@ -35,7 +35,6 @@ class CartProvider extends ChangeNotifier {
     return cartId; // Return the new cart ID
   }
 
-
   // Add a CartProduct to the cart
   Future<void> addCartProduct(String cartId, CartProduct cartProduct) async {
     await _firestoreService.addCartProduct(cartId, cartProduct);
@@ -50,8 +49,6 @@ class CartProvider extends ChangeNotifier {
 
   // Update a CartProduct quantity in the cart
   Future<void> updateCartProductQuantity(String cartId, String cartProductId, int newQuantity) async {
-    print(newQuantity);
-
     await _firestoreService.updateCartProductQuantity(cartId, cartProductId, newQuantity);
     notifyListeners();
 
@@ -113,7 +110,6 @@ class CartProvider extends ChangeNotifier {
     notifyListeners();
     }
 
-
   // Given the ID, returns the product stored in the cart
   CartProduct getCartProductById(String cartId, String cartProductId) {
     final cart = _carts.firstWhere((c) => c.id == cartId);
@@ -126,6 +122,4 @@ class CartProvider extends ChangeNotifier {
 
     return product.quantity ?? 0;
   }
-
-
 }

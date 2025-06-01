@@ -7,10 +7,12 @@ class ProductsPage extends StatefulWidget {
   const ProductsPage({super.key});
 
   @override
-  State<ProductsPage> createState() => _ProductsPageState();
+  State<ProductsPage> createState() {
+    return ProductsPageState();
+  }
 }
 
-class _ProductsPageState extends State<ProductsPage> {
+class ProductsPageState extends State<ProductsPage> {
   bool _isInit = true;
   bool _isLoading = false;
 
@@ -46,6 +48,7 @@ class _ProductsPageState extends State<ProductsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            /*
             // 🔍 Search Bar
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -61,7 +64,7 @@ class _ProductsPageState extends State<ProductsPage> {
                 ),
               ),
             ),
-
+            */
             const SizedBox(height: 20),
 
             const Text(
@@ -71,7 +74,7 @@ class _ProductsPageState extends State<ProductsPage> {
 
             const SizedBox(height: 10),
 
-            // Grid of Product Cards
+            //-------------------- Grid of Product Cards --------------------
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())

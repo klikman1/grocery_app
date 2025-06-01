@@ -7,7 +7,7 @@ class FirestoreService {
   final CollectionReference productsCollection =
       FirebaseFirestore.instance.collection('products');
   final CollectionReference cartsCollection =
-      FirebaseFirestore.instance.collection('carts'); // Cart collection
+      FirebaseFirestore.instance.collection('carts');
 
   // Fetch products from Database
   Future<List<Product>> fetchProducts() async {
@@ -42,8 +42,7 @@ class FirestoreService {
   }
 
   // Update a product in Database
-  Future<void> updateProduct(
-      String productId, Map<String, dynamic> updatedProductData) async {
+  Future<void> updateProduct(String productId, Map<String, dynamic> updatedProductData) async {
     try {
       await productsCollection.doc(productId).update(updatedProductData);
       print("Product updated in Database!");
@@ -64,6 +63,7 @@ class FirestoreService {
     }
   }
 
+  // Delete product in database
   Future<void> deleteProduct(String productId) async {
     try {
       await FirebaseFirestore.instance
@@ -111,8 +111,6 @@ class FirestoreService {
         );
       }).toList());
 
-      print(carts.toString());
-
       return carts;
     } catch (e) {
       print("Error fetching carts from database: $e");
@@ -136,7 +134,6 @@ class FirestoreService {
   /////////////// C A R T S P R O D U C T S ///////////////////
   ////////////////////////////////////////////////////////////
 
-  // TODO: MODIFY THE TOTAL QUANTITY AND TOTAL PRICE OF THE CART
   // Add a CartProduct to a Cart
   Future<void> addCartProduct(String cartId, CartProduct cartProduct) async {
     try {
@@ -240,31 +237,16 @@ class FirestoreService {
     }
   }
 
-  //////////////////////////////////////////////////////////////////////////////
-  //////////////////////////////////////////////////////////////////////////////
-
-  // Update a cart in Database
-  Future<void> updateCart(
-      String cartId, Map<String, dynamic> updatedCartData) async {
-    try {
-      await cartsCollection.doc(cartId).update(updatedCartData);
-      print("Cart updated in Database!");
-    } catch (e) {
-      print("Error updating cart in Database: $e");
-    }
-  }
-
-  // TODO: MODIFY THE TOTAL QUANTITY AND TOTAL PRICE OF THE CART
   // Updates the `products` list of a cart in Database
   Future<void> updateCartProducts(ShoppingCart cart) async {
     try {
       // Transform into a list the new products data of the cart
       final productsData = cart.products
           .map((cp) => {
-                'productId': cp.productId,
-                'quantity': cp.quantity,
-                'isChecked': cp.isChecked,
-              })
+        'productId': cp.productId,
+        'quantity': cp.quantity,
+        'isChecked': cp.isChecked,
+      })
           .toList();
 
       // Update the DB with new data
@@ -272,9 +254,25 @@ class FirestoreService {
         'products': productsData,
       });
 
+      // Now update total quantity and total price in the ShoppingCart
+      await _recalculateCartTotals(cart.id);
+
       print("Cart products updated in Database!");
     } catch (e) {
       print("Error updating cart products: $e");
+    }
+  }
+
+  ///////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////
+
+  // Update a cart in Database
+  Future<void> updateCart(String cartId, Map<String, dynamic> updatedCartData) async {
+    try {
+      await cartsCollection.doc(cartId).update(updatedCartData);
+      print("Cart updated in Database!");
+    } catch (e) {
+      print("Error updating cart in Database: $e");
     }
   }
 

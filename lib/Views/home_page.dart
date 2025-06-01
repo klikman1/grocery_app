@@ -11,7 +11,7 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  // Track the selected index (default is 0 = Cart page)
+  // default is 0 = Cart page
   int _selectedIndex = 0;
 
   // List of pages corresponding to each tab
@@ -73,17 +73,20 @@ class _HomePageScreenState extends State<HomePageScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Shopping lists tab
+
+            //---------------------Shopping lists tab----------------------
             GestureDetector(
               onTap: () => onItemTapped(0),
               child: _buildIcon(Icons.shopping_cart_outlined, 0),
             ),
-            // Products tab
+
+            //--------------------- Products tab --------------------------
             GestureDetector(
               onTap: () => onItemTapped(1),
               child: _buildIcon(Icons.shopping_bag_outlined, 1),
             ),
-            // Create a product tab
+
+            //------------------ Create a product tab ---------------------
             GestureDetector(
               onTap: () => onItemTapped(2),
               child: _buildIcon(Icons.add_outlined, 2),
