@@ -8,6 +8,7 @@ class CountBox extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
+    // Count box in a semi round box with CheckedCount/TotalCount
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 12.0,

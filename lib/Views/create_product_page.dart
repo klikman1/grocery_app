@@ -29,12 +29,12 @@ class CreateProductPageState extends State<CreateProductPage> {
     descriptionController = TextEditingController();
   }
 
+  // Pick image from Gallery or Camera and
+  // Save image that's coming from Camera
   Future<void> _pickImage(ImageSource source) async {
     final picked = await _picker.pickImage(source: source);
     if (picked != null) {
       final file = File(picked.path);
-
-      print(" I am in pickImage");
 
       // Save the image to gallery if it was taken from the camera
       if (source == ImageSource.camera) {
@@ -51,6 +51,7 @@ class CreateProductPageState extends State<CreateProductPage> {
     }
   }
 
+  // Show bottom sheet with options to choose image source
   void showImageSourceChoices(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -78,6 +79,7 @@ class CreateProductPageState extends State<CreateProductPage> {
     );
   }
 
+  // Create a product form
   Future<void> createProduct(BuildContext context) async {
     final name = nameController.text.trim();
     final price = double.tryParse(priceController.text) ?? 0.0;
@@ -112,16 +114,16 @@ class CreateProductPageState extends State<CreateProductPage> {
                 onTap: () => showImageSourceChoices(context),
                 child: CircleAvatar(
                   radius: 100,
-                  backgroundImage: _imageFile != null
-                      ? FileImage(_imageFile!)
-                      : null,
+                  backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
                   backgroundColor: Colors.grey[200],
                   child: _imageFile == null
                       ? const Icon(Icons.add_a_photo, size: 50, color: Colors.grey)
                       : null,
                 ),
               ),
+
               const SizedBox(height: 20),
+              //------------------Product's name text field--------------------
               TextField(
                 controller: nameController,
                 decoration: const InputDecoration(
@@ -129,7 +131,9 @@ class CreateProductPageState extends State<CreateProductPage> {
                   border: OutlineInputBorder(),
                 ),
               ),
+
               const SizedBox(height: 12),
+              //------------------Product's price text field-------------------
               TextField(
                 controller: priceController,
                 keyboardType: TextInputType.number,
@@ -138,7 +142,9 @@ class CreateProductPageState extends State<CreateProductPage> {
                   border: OutlineInputBorder(),
                 ),
               ),
+
               const SizedBox(height: 12),
+              //------------------Product's description text field-------------
               TextField(
                 controller: descriptionController,
                 maxLines: 3,
@@ -147,7 +153,9 @@ class CreateProductPageState extends State<CreateProductPage> {
                   border: OutlineInputBorder(),
                 ),
               ),
+
               const SizedBox(height: 20),
+              //------------------------ Save product -------------------------
               ElevatedButton.icon(
                 onPressed: () => createProduct(context),
                 icon: const Icon(Icons.save),

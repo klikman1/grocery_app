@@ -27,6 +27,7 @@ class ProductCardState extends State<ProductCard> {
     });
   }
 
+  // Add product to a cart
   void addProductToCart(BuildContext context, Product product) async {
     final cartProvider = Provider.of<CartProvider>(context, listen: false);
     final carts = cartProvider.carts;
@@ -58,24 +59,29 @@ class ProductCardState extends State<ProductCard> {
 
         builder: (_) {
           return ListView(
+            shrinkWrap: true,
             children: carts.map((cart) {
-              return ListTile(
-
-                title: Text(cart.name),
-                onTap: () {
-                  cartProvider.addCartProduct(cart.id, newCartProduct);
-                  Navigator.pop(context);
-                  // Change the button text
-                  toggleCartStatus();
-                },
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.lightGreen,
+                  borderRadius: BorderRadius.circular(12.0),
+                ),
+                child: ListTile(
+                  title: Text(cart.name, style: TextStyle(color: Colors.white)),
+                  onTap: () {
+                    cartProvider.addCartProduct(cart.id, newCartProduct);
+                    Navigator.pop(context);
+                    toggleCartStatus();
+                  },
+                ),
               );
             }).toList(),
           );
+
         },
       );
     }
-
-
   }
 
   @override
@@ -144,7 +150,7 @@ class ProductCardState extends State<ProductCard> {
                   : toggleCartStatus,
               icon: Icon(
                 isAdded ? Icons.check_circle : Icons.shopping_bag_outlined,
-                color: isAdded ? Colors.green : Colors.lightGreen,
+                color: isAdded ? Colors.lightGreen : Colors.lightGreen,
               ),
               label: Text(isAdded ? "Added" : "Add to cart"),
               style: TextButton.styleFrom(
