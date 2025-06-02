@@ -11,8 +11,8 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  // default is 0 = Cart page
-  int _selectedIndex = 0;
+  // default is 1 = Products page
+  int _selectedIndex = 1;
 
   // List of pages corresponding to each tab
   final List<Widget> _pages = [
@@ -59,7 +59,7 @@ class _HomePageScreenState extends State<HomePageScreen> {
 
       // Bottom navigation bar
       bottomNavigationBar: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.symmetric(vertical: 18),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [

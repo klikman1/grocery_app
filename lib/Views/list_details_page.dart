@@ -60,7 +60,7 @@ class ListDetailsPageState extends State<ListDetailsPage> {
 
               //--------------------Total price panel --------------------------
               Container(
-                padding: EdgeInsets.fromLTRB(16, 16, 16, 80),
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 120),
                 color: Colors.white,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

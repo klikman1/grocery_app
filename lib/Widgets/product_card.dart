@@ -126,22 +126,13 @@ class ProductCardState extends State<ProductCard> {
                 fontWeight: FontWeight.bold,
               ),
             ),
+            const SizedBox(height: 6.0),
             Text(
               product.name,
               style: const TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
-            ),
-            const SizedBox(height: 6.0),
-            Text(
-              product.nutritionDetails,
-              style: const TextStyle(
-                fontSize: 14.0,
-                color: Colors.grey,
-              ),
-              textAlign: TextAlign.center,
-              softWrap: true,
             ),
             const SizedBox(height: 4.0),
             TextButton.icon(
