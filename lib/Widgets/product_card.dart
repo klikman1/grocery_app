@@ -133,6 +133,8 @@ class ProductCardState extends State<ProductCard> {
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
               ),
+              softWrap: false,
+              overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4.0),
             TextButton.icon(

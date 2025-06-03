@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:techno_mobile/Views/create_product_page.dart';
 import 'package:techno_mobile/Views/products_page.dart';
 import 'package:techno_mobile/Views/shopping_lists_page.dart';
 
@@ -18,7 +17,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
   final List<Widget> _pages = [
     const ShoppingListsPage(),
     const ProductsPage(),
-    const CreateProductPage()
   ];
 
   /// Update the selected index when a navigation item is tapped
@@ -84,12 +82,6 @@ class _HomePageScreenState extends State<HomePageScreen> {
             GestureDetector(
               onTap: () => onItemTapped(1),
               child: _buildIcon(Icons.shopping_bag_outlined, 1),
-            ),
-
-            //------------------ Create a product tab ---------------------
-            GestureDetector(
-              onTap: () => onItemTapped(2),
-              child: _buildIcon(Icons.add_outlined, 2),
             ),
           ],
         ),

@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:techno_mobile/Widgets/round_image_widget.dart';
 import '../Provider/CartProvider.dart';
 import '../models/Product.dart';
 import 'edit_product_page.dart';
@@ -56,8 +55,7 @@ class ProductDetailsPage extends StatelessWidget {
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: const Text(
               "Delete",
-              style:
-                  TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white),
             ),
           ),
         ],
@@ -91,31 +89,6 @@ class ProductDetailsPage extends StatelessWidget {
     );
   }
 
-  /// Product image widget
-  Widget getProductImage() {
-    // Check if the image is from internet
-    if (product.imageUrl.startsWith('http')) {
-      // Network image
-      return ClipOval(
-        child: Image.network(
-          product.imageUrl,
-          height: 200,
-          fit: BoxFit.cover,
-        ),
-      );
-    } else {
-      // Image from gallery or device storage
-      return ClipOval(
-        child: Image.file(
-          File(product.imageUrl),
-          height: 200,
-          width: 350,
-          fit: BoxFit.cover,
-        ),
-      );
-    }
-  }
-
   /// Price and title widget
   Widget getPriceAndTitle() {
     return Column(
@@ -143,11 +116,12 @@ class ProductDetailsPage extends StatelessWidget {
   }
 
   /// Product info (image, name, price) widget
-  Widget buildProductInfoPart(BuildContext context, ProductProvider givenProvider) {
+  Widget buildProductInfoPart(
+      BuildContext context, ProductProvider givenProvider) {
     return Container(
-      height: 450,
+      height: 350,
       padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
-      margin: const EdgeInsets.only(top: 100),
+      margin: const EdgeInsets.only(top: 10),
       decoration: BoxDecoration(
         color: Colors.grey[300],
         borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
@@ -163,9 +137,16 @@ class ProductDetailsPage extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 10),
             child: Center(
               child: ElevatedButton.icon(
-                onPressed: () => confirmAndDelete(context, givenProvider, product),
-                icon: const Icon(Icons.delete, color: Colors.white,),
-                label: const Text("Delete Product", style: TextStyle(color: Colors.white),),
+                onPressed: () =>
+                    confirmAndDelete(context, givenProvider, product),
+                icon: const Icon(
+                  Icons.delete,
+                  color: Colors.white,
+                ),
+                label: const Text(
+                  "Delete Product",
+                  style: TextStyle(color: Colors.white),
+                ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   padding:
@@ -194,7 +175,10 @@ class ProductDetailsPage extends StatelessWidget {
         body: SafeArea(
           child: Column(
             children: [
-              Expanded(child: getProductImage()),
+              /// Product image widget
+              Expanded(
+                child: RoundImageWidget(imageLink: product.imageUrl, size: 350),
+              ),
               buildProductInfoPart(context, provider),
             ],
           ),

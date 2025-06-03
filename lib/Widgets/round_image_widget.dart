@@ -19,13 +19,22 @@ class RoundImageWidget extends StatelessWidget {
       child: ClipOval(
         child: imageLink.startsWith('http')
             ? Image.network(
-          imageLink,
-          fit: BoxFit.cover,
-        )
-            : Image.file(
-          File(imageLink),
-          fit: BoxFit.cover,
-        ),
+                imageLink,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Image.asset(
+                  'assets/placeholder.png',
+                  fit: BoxFit.cover,
+                ),
+              )
+            : File(imageLink).existsSync()
+                ? Image.file(
+                    File(imageLink),
+                    fit: BoxFit.cover,
+                  )
+                : Image.asset(
+                    'assets/placeholder.png',
+                    fit: BoxFit.cover,
+                  ),
       ),
     );
   }

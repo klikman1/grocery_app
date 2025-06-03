@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:saver_gallery/saver_gallery.dart';
 import '../Provider/ProductProvider.dart';
+
 
 class CreateProductPage extends StatefulWidget {
   const CreateProductPage({super.key});
 
   @override
-  State<CreateProductPage> createState(){
+  State<CreateProductPage> createState() {
     return CreateProductPageState();
   }
 }
@@ -29,29 +29,24 @@ class CreateProductPageState extends State<CreateProductPage> {
     descriptionController = TextEditingController();
   }
 
-  // Pick image from Gallery or Camera and
-  // Save image that's coming from Camera
+  @override
+  void dispose() {
+    nameController.dispose();
+    priceController.dispose();
+    descriptionController.dispose();
+    super.dispose();
+  }
+
   Future<void> _pickImage(ImageSource source) async {
     final picked = await _picker.pickImage(source: source);
     if (picked != null) {
       final file = File(picked.path);
-
-      // Save the image to gallery if it was taken from the camera
-      if (source == ImageSource.camera) {
-        try {
-          SaverGallery.saveImage(file.readAsBytesSync(), fileName: picked.path, skipIfExists: false);
-          print("Save to gallery");
-        } catch (e) {
-          print("Error saving image to gallery: $e");
-        }
-      }
       setState(() {
         _imageFile = file;
       });
     }
   }
 
-  // Show bottom sheet with options to choose image source
   void showImageSourceChoices(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -79,10 +74,10 @@ class CreateProductPageState extends State<CreateProductPage> {
     );
   }
 
-  // Create a product form
   Future<void> createProduct(BuildContext context) async {
     final name = nameController.text.trim();
-    final price = double.tryParse(priceController.text) ?? 0.0;
+    final priceText = priceController.text.trim().replaceAll(',', '.');
+    final price = double.tryParse(priceText) ?? 0.0;
     final description = descriptionController.text.trim();
 
     if (name.isEmpty || description.isEmpty || _imageFile == null) {
@@ -94,79 +89,99 @@ class CreateProductPageState extends State<CreateProductPage> {
 
     final provider = Provider.of<ProductProvider>(context, listen: false);
 
-    await provider.createProduct(name, 1, price, description,  _imageFile!.path);
+    await provider.createProduct(name, 1, price, description, _imageFile!.path);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Product created')),
     );
+
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("New Product")),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: () => showImageSourceChoices(context),
-                child: CircleAvatar(
-                  radius: 100,
-                  backgroundImage: _imageFile != null ? FileImage(_imageFile!) : null,
-                  backgroundColor: Colors.grey[200],
-                  child: _imageFile == null
-                      ? const Icon(Icons.add_a_photo, size: 50, color: Colors.grey)
-                      : null,
+    return GestureDetector(
+      // Dismiss keyboard when tapping outside
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(title: const Text("New Product")),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                
+                // ------------------ Image picker ------------------
+                GestureDetector(
+                  onTap: () => showImageSourceChoices(context),
+                  child: CircleAvatar(
+                    radius: 100,
+                    backgroundImage:
+                        _imageFile != null ? FileImage(_imageFile!) : null,
+                    backgroundColor: Colors.grey[200],
+                    child: _imageFile == null
+                        ? const Icon(Icons.add_a_photo, size: 50, color: Colors.grey)
+                        : null,
+                  ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
-              //------------------Product's name text field--------------------
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: "Product Name",
-                  border: OutlineInputBorder(),
-                ),
-              ),
+                const SizedBox(height: 20),
 
-              const SizedBox(height: 12),
-              //------------------Product's price text field-------------------
-              TextField(
-                controller: priceController,
-                keyboardType: TextInputType.number,
-                decoration: const InputDecoration(
-                  labelText: "Price (€)",
-                  border: OutlineInputBorder(),
+                // ------------------ Name Field ------------------
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(
+                    labelText: "Product Name",
+                    border: OutlineInputBorder(),
+                  ),
+                  textInputAction: TextInputAction.next,
                 ),
-              ),
 
-              const SizedBox(height: 12),
-              //------------------Product's description text field-------------
-              TextField(
-                controller: descriptionController,
-                maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: "Description / Nutrition details",
-                  border: OutlineInputBorder(),
-                ),
-              ),
+                const SizedBox(height: 12),
 
-              const SizedBox(height: 20),
-              //------------------------ Save product -------------------------
-              ElevatedButton.icon(
-                onPressed: () => createProduct(context),
-                icon: const Icon(Icons.save),
-                label: const Text("Create Product"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.lightGreen[700],
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                // ------------------ Price Field ------------------
+                TextField(
+                  controller: priceController,
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: const InputDecoration(
+                    labelText: "Price (€)",
+                    border: OutlineInputBorder(),
+                  ),
+                  textInputAction: TextInputAction.next,
                 ),
-              ),
-            ],
+
+                const SizedBox(height: 12),
+
+                // ------------------ Description Field ------------------
+                TextField(
+                  controller: descriptionController,
+                  maxLines: 3,
+                  decoration: const InputDecoration(
+                    labelText: "Description / Nutrition details",
+                    border: OutlineInputBorder(),
+                  ),
+                  textInputAction: TextInputAction.done,
+                ),
+
+                const SizedBox(height: 20),
+
+                // ------------------ Save Button ------------------
+                ElevatedButton.icon(
+                  onPressed: () => createProduct(context),
+                  icon: const Icon(Icons.save),
+                  label: const Text("Create Product"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.lightGreen[700],
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

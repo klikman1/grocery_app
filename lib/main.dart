@@ -14,8 +14,11 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FlutterNativeSplash.remove();
+  await Future.delayed(const Duration(seconds: 2));
+  
   runApp(MyApp());
+  
+  FlutterNativeSplash.remove();
 }
 
 class MyApp extends StatelessWidget {

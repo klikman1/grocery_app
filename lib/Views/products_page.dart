@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:techno_mobile/Provider/ProductProvider.dart';
+import 'package:techno_mobile/Views/create_product_page.dart';
 import 'package:techno_mobile/Widgets/product_card.dart';
 
 class ProductsPage extends StatefulWidget {
@@ -79,22 +80,32 @@ class ProductsPageState extends State<ProductsPage> {
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : productsFromDB.isEmpty
-                  ? const Center(child: Text("No products found"))
-                  : GridView.builder(
-                itemCount: productsFromDB.length,
-                gridDelegate:
-                const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.62,
-                ),
-                itemBuilder: (context, index) {
-                  final product = productsFromDB[index];
-                  return ProductCard(productId: product.id);
-                },
-              ),
+                      ? const Center(child: Text("No products found"))
+                      : GridView.builder(
+                          itemCount: productsFromDB.length,
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 0.62,
+                          ),
+                          itemBuilder: (context, index) {
+                            final product = productsFromDB[index];
+                            return ProductCard(productId: product.id);
+                          },
+                        ),
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CreateProductPage()),
+          );
+        },
+        backgroundColor: Colors.lightGreen.shade600,
+        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
