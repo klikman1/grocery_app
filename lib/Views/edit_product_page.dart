@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as path;
 import 'package:provider/provider.dart';
+import 'package:techno_mobile/firebaseAPI/FireStorageService.dart';
 import '../Provider/ProductProvider.dart';
 
 class EditProductPage extends StatefulWidget {
@@ -34,6 +33,7 @@ class EditProductPageState extends State<EditProductPage> {
   late TextEditingController descriptionController;
   File? _imageFile;
 
+  final _storageService = Firestorageservice();
   final ImagePicker _picker = ImagePicker();
 
   // Show bottom sheet with options to choose image source
@@ -64,41 +64,23 @@ class EditProductPageState extends State<EditProductPage> {
     );
   }
 
+  Future<void> _pickImage(ImageSource source) async {
+    final picked = await _picker.pickImage(source: source);
+    if (picked != null) {
+      final file = File(picked.path);
+
+      setState(() {
+        _imageFile = file;
+      });
+    }
+  }
+
   @override
   void initState() {
     super.initState();
     nameController = TextEditingController(text: widget.name);
     priceController = TextEditingController(text: widget.price.toString());
     descriptionController = TextEditingController(text: widget.description);
-  }
-
-  // Pick image from Gallery or Camera
-  Future<void> _pickImage(ImageSource source) async {
-    try {
-      final picked = await _picker.pickImage(source: source);
-      if (picked != null) {
-        final tempImage = File(picked.path);
-
-        // Get persistent app directory
-        final appDir = await getApplicationDocumentsDirectory();
-
-        // Create shorter filename using timestamp
-        final timestamp = DateTime.now().millisecondsSinceEpoch;
-        final extension = path.extension(picked.path);
-        final fileName = 'img_$timestamp$extension';
-
-        // Copy image to persistent location
-        final savedImage = await tempImage.copy('${appDir.path}/$fileName');
-
-        setState(() {
-          _imageFile = savedImage;
-        });
-
-        print("Image saved locally at: ${savedImage.path}");
-      }
-    } catch (e) {
-      print(" Error picking or saving image: $e");
-    }
   }
 
   @override
@@ -121,8 +103,8 @@ class EditProductPageState extends State<EditProductPage> {
                       radius: 100,
                       backgroundImage: _imageFile != null
                           ? FileImage(_imageFile!)
-                          : File(widget.image).existsSync()
-                              ? FileImage(File(widget.image))
+                          : widget.image.isNotEmpty
+                              ? NetworkImage(widget.image)
                               : const AssetImage("assets/placeholder.png")
                                   as ImageProvider,
                       child: const Align(
@@ -176,18 +158,28 @@ class EditProductPageState extends State<EditProductPage> {
                           Provider.of<ProductProvider>(context, listen: false);
 
                       // Replace commas with dots before parsing to double
-                      final rawPrice =
-                          priceController.text.trim().replaceAll(',', '.');
+                      final rawPrice = priceController.text.trim().replaceAll(',', '.');
                       final parsedPrice = double.tryParse(rawPrice) ?? 0.0;
+
+                      // Upload image to Firebase Storage with simple name
+                        final downloadUrl = await _storageService.uploadImageToFirebase(
+                          _imageFile!,
+                          customName: nameController.text.replaceAll(' ', '_').toLowerCase(),
+                        );
+
+                        if (downloadUrl == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Image upload failed')),
+                          );
+                          return;
+                        }
 
                       await provider.updateProduct(
                         productId: widget.productId,
                         name: nameController.text,
                         unityPrice: parsedPrice,
                         nutritionDetails: descriptionController.text,
-                        imageUrl: _imageFile != null
-                            ? _imageFile!.path
-                            : widget.image,
+                        imageUrl: downloadUrl,
                       );
 
                       Navigator.pop(context);

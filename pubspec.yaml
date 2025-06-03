@@ -47,6 +47,8 @@ dependencies:
   slideable: ^0.0.2
   camera: ^0.11.0+2
   saver_gallery: ^4.0.1
+  image_gallery_saver: ^2.0.3
+  permission_handler: ^11.0.0
 
 
 #dependency_overrides:

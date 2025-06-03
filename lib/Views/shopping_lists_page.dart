@@ -98,6 +98,7 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
     }
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.grey.shade100,
       body: Consumer<CartProvider>(
         builder: (context, provider, child) {

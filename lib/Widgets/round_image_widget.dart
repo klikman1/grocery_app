@@ -13,11 +13,19 @@ class RoundImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final file = File(imageLink);
+
+    print("ImageLink ${imageLink}");
+    print("File ${file}");
+
+    final bool isNetwork = imageLink.startsWith('http');
+    final bool isLocalFile = !isNetwork && file.existsSync();
+    
     return SizedBox(
       width: size,
       height: size,
       child: ClipOval(
-        child: imageLink.startsWith('http')
+        child: isNetwork
             ? Image.network(
                 imageLink,
                 fit: BoxFit.cover,
@@ -26,9 +34,9 @@ class RoundImageWidget extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               )
-            : File(imageLink).existsSync()
+            : isLocalFile
                 ? Image.file(
-                    File(imageLink),
+                    file,
                     fit: BoxFit.cover,
                   )
                 : Image.asset(

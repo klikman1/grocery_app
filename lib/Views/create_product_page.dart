@@ -2,8 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:techno_mobile/firebaseAPI/FireStorageService.dart';
 import '../Provider/ProductProvider.dart';
-
 
 class CreateProductPage extends StatefulWidget {
   const CreateProductPage({super.key});
@@ -20,6 +20,7 @@ class CreateProductPageState extends State<CreateProductPage> {
   late TextEditingController descriptionController;
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
+  final _storageService = Firestorageservice();
 
   @override
   void initState() {
@@ -41,6 +42,7 @@ class CreateProductPageState extends State<CreateProductPage> {
     final picked = await _picker.pickImage(source: source);
     if (picked != null) {
       final file = File(picked.path);
+
       setState(() {
         _imageFile = file;
       });
@@ -76,26 +78,48 @@ class CreateProductPageState extends State<CreateProductPage> {
 
   Future<void> createProduct(BuildContext context) async {
     final name = nameController.text.trim();
-    final priceText = priceController.text.trim().replaceAll(',', '.');
-    final price = double.tryParse(priceText) ?? 0.0;
+    final rawPrice = priceController.text.trim().replaceAll(',', '.');
+    final parsedPrice = double.tryParse(rawPrice) ?? 0.0;
+
     final description = descriptionController.text.trim();
 
     if (name.isEmpty || description.isEmpty || _imageFile == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill all fields and select an image')),
+        const SnackBar(
+            content: Text('Please fill all fields and select an image')),
       );
       return;
     }
 
-    final provider = Provider.of<ProductProvider>(context, listen: false);
+    try {
+      // Upload image to Firebase Storage with simple name
+      final downloadUrl = await _storageService.uploadImageToFirebase(
+        _imageFile!,
+        customName: name.replaceAll(' ', '_').toLowerCase(),
+      );
 
-    await provider.createProduct(name, 1, price, description, _imageFile!.path);
+      if (downloadUrl == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Image upload failed')),
+        );
+        return;
+      }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Product created')),
-    );
+      // Save product data with download URL
+      final provider = Provider.of<ProductProvider>(context, listen: false);
+      await provider.createProduct(name, 1, parsedPrice, description, downloadUrl);
 
-    Navigator.pop(context);
+      // If success
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Product created')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      print('Error creating product: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to create product')),
+      );
+    }
   }
 
   @override
@@ -110,7 +134,6 @@ class CreateProductPageState extends State<CreateProductPage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                
                 // ------------------ Image picker ------------------
                 GestureDetector(
                   onTap: () => showImageSourceChoices(context),
@@ -120,7 +143,8 @@ class CreateProductPageState extends State<CreateProductPage> {
                         _imageFile != null ? FileImage(_imageFile!) : null,
                     backgroundColor: Colors.grey[200],
                     child: _imageFile == null
-                        ? const Icon(Icons.add_a_photo, size: 50, color: Colors.grey)
+                        ? const Icon(Icons.add_a_photo,
+                            size: 50, color: Colors.grey)
                         : null,
                   ),
                 ),
