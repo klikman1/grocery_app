@@ -10,13 +10,13 @@ class HomePageScreen extends StatefulWidget {
 }
 
 class _HomePageScreenState extends State<HomePageScreen> {
-  // default is 1 = Products page
-  int _selectedIndex = 1;
+  // default is 0 = Products page
+  int _selectedIndex = 0;
 
   // List of pages corresponding to each tab
   final List<Widget> _pages = [
-    const ShoppingListsPage(),
     const ProductsPage(),
+    const ShoppingListsPage(),
   ];
 
   /// Update the selected index when a navigation item is tapped
@@ -75,13 +75,13 @@ class _HomePageScreenState extends State<HomePageScreen> {
             //---------------------Shopping lists tab----------------------
             GestureDetector(
               onTap: () => onItemTapped(0),
-              child: _buildIcon(Icons.shopping_cart_outlined, 0),
+              child: _buildIcon(Icons.shopping_bag_outlined, 0),
             ),
 
             //--------------------- Products tab --------------------------
             GestureDetector(
               onTap: () => onItemTapped(1),
-              child: _buildIcon(Icons.shopping_bag_outlined, 1),
+              child: _buildIcon(Icons.shopping_cart_outlined, 1),
             ),
           ],
         ),

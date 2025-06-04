@@ -154,25 +154,34 @@ class EditProductPageState extends State<EditProductPage> {
                         return;
                       }
 
-                      final provider =
-                          Provider.of<ProductProvider>(context, listen: false);
+                      final provider = Provider.of<ProductProvider>(context, listen: false);
 
-                      // Replace commas with dots before parsing to double
+                      // Replace commas with dots 
                       final rawPrice = priceController.text.trim().replaceAll(',', '.');
                       final parsedPrice = double.tryParse(rawPrice) ?? 0.0;
 
-                      // Upload image to Firebase Storage with simple name
-                        final downloadUrl = await _storageService.uploadImageToFirebase(
+                      String downloadUrl = widget.image;
+
+                      // Upload a new image if one was picked
+                      if (_imageFile != null) {
+                        final uploadedUrl =
+                            await _storageService.uploadImageToFirebase(
                           _imageFile!,
-                          customName: nameController.text.replaceAll(' ', '_').toLowerCase(),
+                          customName: nameController.text
+                              .replaceAll(' ', '_')
+                              .toLowerCase(),
                         );
 
-                        if (downloadUrl == null) {
+                        if (uploadedUrl == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Image upload failed')),
+                            const SnackBar(
+                                content: Text('Image upload failed')),
                           );
                           return;
                         }
+
+                        downloadUrl = uploadedUrl;
+                      }
 
                       await provider.updateProduct(
                         productId: widget.productId,

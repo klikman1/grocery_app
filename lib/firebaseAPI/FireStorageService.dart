@@ -5,7 +5,6 @@ import 'dart:io';
 class Firestorageservice {
 
   /// Method for upload an Image to the database
-  
   Future<String?> uploadImageToFirebase(File imageFile, {required String customName}) async {
     try {
       final fileName = '$customName.jpg';
