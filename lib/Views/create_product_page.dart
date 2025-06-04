@@ -38,6 +38,8 @@ class CreateProductPageState extends State<CreateProductPage> {
     super.dispose();
   }
 
+  // Pick Image from Gallery or Camera and
+  // Save image that's coming from Camera
   Future<void> _pickImage(ImageSource source) async {
     final picked = await _picker.pickImage(source: source);
     if (picked != null) {
@@ -49,6 +51,7 @@ class CreateProductPageState extends State<CreateProductPage> {
     }
   }
 
+  // Show bottom sheet with options to choose image source
   void showImageSourceChoices(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -76,6 +79,7 @@ class CreateProductPageState extends State<CreateProductPage> {
     );
   }
 
+  // Create a product form
   Future<void> createProduct(BuildContext context) async {
     final name = nameController.text.trim();
     final rawPrice = priceController.text.trim().replaceAll(',', '.');

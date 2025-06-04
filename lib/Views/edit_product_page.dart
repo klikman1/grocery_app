@@ -64,6 +64,8 @@ class EditProductPageState extends State<EditProductPage> {
     );
   }
 
+  // Pick Image from Gallery or Camera and
+  // Save image that's coming from Camera
   Future<void> _pickImage(ImageSource source) async {
     final picked = await _picker.pickImage(source: source);
     if (picked != null) {

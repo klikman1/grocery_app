@@ -116,8 +116,11 @@ class ProductCardState extends State<ProductCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            //-------------------Product's image -----------------------
             RoundImageWidget(imageLink: product.imageUrl),
             const SizedBox(height: 12.0),
+            
+            //-------------------Product's price-----------------------
             Text(
               "${product.unityPrice.toStringAsFixed(2)} €",
               style: TextStyle(
@@ -127,6 +130,7 @@ class ProductCardState extends State<ProductCard> {
               ),
             ),
             const SizedBox(height: 6.0),
+            //-------------------Product's name-----------------------
             Text(
               product.name,
               style: const TextStyle(
@@ -137,6 +141,7 @@ class ProductCardState extends State<ProductCard> {
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 4.0),
+            //-------------------Add to cart button-----------------------
             TextButton.icon(
               onPressed: () => isAdded == false
                   ? addProductToCart(context, product)

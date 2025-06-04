@@ -169,7 +169,7 @@ class ShoppingListsPageState extends State<ShoppingListsPage> {
                     child: ListView.builder(
                       itemCount: provider.carts.length,
                       itemBuilder: (context, index) {
-                        final cart = provider.carts[index]; // Current cart
+                        final cart = provider.carts[index]; 
                         return Slideable(
                           key: ValueKey(cart.id),
                           items: [

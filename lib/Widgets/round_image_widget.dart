@@ -15,9 +15,6 @@ class RoundImageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final file = File(imageLink);
 
-    print("ImageLink ${imageLink}");
-    print("File ${file}");
-
     final bool isNetwork = imageLink.startsWith('http');
     final bool isLocalFile = !isNetwork && file.existsSync();
     

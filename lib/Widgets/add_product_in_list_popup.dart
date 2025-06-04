@@ -43,6 +43,7 @@ class _AddProductInListPopupState extends State<AddProductInListPopup> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            //-------------------Search product part-----------------------
             TextField(
               decoration: InputDecoration(
                 hintText: 'Search product',
@@ -54,6 +55,7 @@ class _AddProductInListPopupState extends State<AddProductInListPopup> {
               onChanged: (value) => setState(() => query = value),
             ),
             SizedBox(height: 16),
+            //-------------List view of product to add in the cart---------------
             Expanded(
               child: ListView.builder(
                 itemCount: filtered.length,
@@ -70,7 +72,7 @@ class _AddProductInListPopupState extends State<AddProductInListPopup> {
                             .addCartProduct(
                           widget.selectedCartId,
                           CartProduct(
-                            cartProductId: '', // Firestore generates this
+                            cartProductId: '',
                             productId: product.id,
                             quantity: 1,
                             isChecked: false,
