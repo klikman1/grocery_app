@@ -43,3 +43,25 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+# ---- Flutter / Dart ----
+.dart_tool/
+.packages
+.melos_tool/
+**/build/
+
+# ---- iOS / Xcode (build artifacts) ----
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.framework.dSYM/
+ios/Flutter/App.framework
+ios/Flutter/App.framework.dSYM
+**/*.dSYM
+**/*.xcuserstate
+**/*.xcworkspace/xcuserdata/
+
+# ---- Android (optional but typical) ----
+android/.gradle/
+android/app/build/
+*.apk
+*.aab
