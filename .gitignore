@@ -65,3 +65,12 @@ android/.gradle/
 android/app/build/
 *.apk
 *.aab
+
+# iOS/Flutter build artifacts
+ios/Flutter/Flutter.framework/
+ios/Flutter/Flutter.framework.dSYM/
+ios/Flutter/App.framework
+ios/Flutter/App.framework.dSYM
+**/*.dSYM
+**/build/
+
