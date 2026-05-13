@@ -1,7 +1,33 @@
-# Grocery_app
-This is an application that helps users create and organize their shopping lists before going to the store.
-Users can create, consult, modify and delete shopping lists.
+# Grocery App
 
-## Structure
-Voici le structure du projet
-![WhatsApp Image 2025-04-14 at 12 50 06_723bb64a](https://github.com/user-attachments/assets/6bc1bfec-732f-4005-a631-f563990aecf4)
+A simple mobile grocery application built with **Flutter** and **Firebase**.
+
+The app allows users to create and manage grocery items and grocery lists. Users can add item details, quantities, and images, then save the data online using Firebase.
+
+## Features
+
+- Create, read, update, and delete grocery items
+- Create and manage grocery lists
+- Add quantities to grocery items
+- Upload or capture item photos
+- Store data using Firebase
+- Prevent deleting items that are already used in a grocery list
+
+## Technologies Used
+
+- Flutter
+- Dart
+- Firebase
+- Firebase Firestore / Realtime Database
+- Firebase Storage
+
+## How to Run the Project
+
+### 1. Clone the repository
+git clone with this project link
+### 2. Install dependencies
+flutter pub get
+### 3. Run the app
+flutter run
+
+HAVE FUN !!
